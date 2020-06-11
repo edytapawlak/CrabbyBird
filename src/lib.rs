@@ -1,4 +1,6 @@
 use gdnative::*;
+
+mod obstacle;
 mod player;
 
 // Function that registers all exposed classes to Godot
