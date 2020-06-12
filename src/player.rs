@@ -38,8 +38,16 @@ impl Player {
             .and_then(|node| node.cast::<AnimatedSprite>());
         // Start flying animation.
         animation
-            .expect("No such AnimationSprite")
-            .play(GodotString::from_str("default"), true);
+            .expect("AnimationSprite doesnt't exist")
+            .play(GodotString::from_str("jump"), true);
+        let mut puff = owner
+            .get_node(NodePath::from_str("./PuffAnimation"))
+            .and_then(|node| node.cast::<AnimatedSprite>())
+            .expect("AnimationSprite doesnt't exist");
+        // Start flying animation.
+        puff.play(GodotString::from_str("default"), true);
+        puff.show();
+
     }
 
     #[export]
@@ -67,5 +75,15 @@ impl Player {
         if owner.get_linear_velocity().y > 0.0 {
             owner.set_angular_velocity(PI / 2.0);
         }
+    }
+
+    // Function connected with animation_finished() event in PuffAnimation child.
+    #[export]
+    unsafe fn _on_puff_animation_finished(&self, owner: RigidBody2D) {
+      owner.get_node(NodePath::from_str("./PuffAnimation"))
+            .and_then(|node| node.cast::<AnimatedSprite>())
+            .expect("AnimationSprite doesnt't exist")
+            .hide()
+
     }
 }
