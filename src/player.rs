@@ -33,6 +33,13 @@ impl Player {
         ));
         // Rotate player anti-clockwise when jumping.
         owner.set_angular_velocity(-PI);
+        let animation = owner
+            .get_node(NodePath::from_str("./AnimatedSprite"))
+            .and_then(|node| node.cast::<AnimatedSprite>());
+        // Start flying animation.
+        animation
+            .expect("No such AnimationSprite")
+            .play(GodotString::from_str("default"), true);
     }
 
     #[export]
