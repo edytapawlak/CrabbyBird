@@ -8,7 +8,6 @@ edition = "2018"
 
 [dependencies]
 gdnative = "0.8"
-nalgebra = "0.21.0"
 
 [lib]
 crate-type = ["cdylib"]

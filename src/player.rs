@@ -1,17 +1,18 @@
 use gdnative::*;
+use std::f64::consts::PI;
 
 #[derive(NativeClass)]
 #[inherit(RigidBody2D)]
 pub struct Player {
     jump_speed: f32,
-    facing_angle: f32, // maximal angle bird can faces up, in degrees
+    facing_angle: f32, // Maximal angle bird can faces up, in degrees.
 }
 
 #[methods]
 impl Player {
     pub fn _init(mut _owner: RigidBody2D) -> Self {
         Player {
-            jump_speed: 400.0,
+            jump_speed: 500.0,
             facing_angle: -30.0,
         }
     }
@@ -25,13 +26,13 @@ impl Player {
 
     #[export]
     unsafe fn flap(&mut self, mut owner: RigidBody2D) {
-        // Modifing only y coordinates of players_velocity
+        // Change player velocity y component to make him jump.
         owner.set_linear_velocity(Vector2::new(
             owner.get_linear_velocity().x,
             -self.jump_speed,
         ));
-        // Make player rotate clockwise while jumping
-        owner.set_angular_velocity(-3.0);
+        // Rotate player anti-clockwise when jumping.
+        owner.set_angular_velocity(-PI);
     }
 
     #[export]
@@ -49,14 +50,15 @@ impl Player {
     unsafe fn _physics_process(&mut self, mut owner: RigidBody2D, _delta: f64) {
         // Asure that player can't face up more than max facing_angle
         let actual_rotation = owner.get_rotation_degrees();
-        let facing_angle = self.facing_angle as f64;
-        if actual_rotation < facing_angle && actual_rotation > -180.0 {
-            owner.set_rotation_degrees(facing_angle);
+        let max_facing_angle = self.facing_angle as f64;
+
+        if actual_rotation < max_facing_angle {
+            owner.set_rotation_degrees(max_facing_angle);
             owner.set_angular_velocity(0.0);
         }
-        // Setting angular velocity while player's falling
+        // Set angular velocity when falling.
         if owner.get_linear_velocity().y > 0.0 {
-            owner.set_angular_velocity(1.5);
+            owner.set_angular_velocity(PI / 2.0);
         }
     }
 }
