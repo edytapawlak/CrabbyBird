@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/craby_mid.png-fd1feee6e7dfd704456560ccf47762a7.stex"
+path="res://.import/crabby_mid.png-294f477caa88761f8d158c294443abfb.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/crabby2/craby_mid.png"
-dest_files=[ "res://.import/craby_mid.png-fd1feee6e7dfd704456560ccf47762a7.stex" ]
+source_file="res://assets/crabby/crabby_mid.png"
+dest_files=[ "res://.import/crabby_mid.png-294f477caa88761f8d158c294443abfb.stex" ]
 
 [params]
 

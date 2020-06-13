@@ -5,7 +5,9 @@ use std::f64::consts::PI;
 #[inherit(RigidBody2D)]
 pub struct Player {
     jump_speed: f32,
-    facing_angle: f32, // Maximal angle bird can faces up, in degrees.
+    max_facing_angle: f32, // Maximal facing angle in degrees.
+    jump_animation: Option<AnimatedSprite>,
+    puff_animation: Option<AnimatedSprite>,
 }
 
 #[methods]
@@ -13,15 +15,25 @@ impl Player {
     pub fn _init(mut _owner: RigidBody2D) -> Self {
         Player {
             jump_speed: 500.0,
-            facing_angle: -30.0,
+            max_facing_angle: -30.0,
+            jump_animation: None,
+            puff_animation: None,
         }
     }
 
     #[export]
     unsafe fn _ready(&mut self, mut owner: RigidBody2D) {
-        // Setting player in the center of the screen
+        // Set player in the center of the screen
         let size = owner.get_viewport_rect().size;
         owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
+        // Set jump animation
+        self.jump_animation = owner
+            .get_node(NodePath::from_str("./AnimatedSprite"))
+            .and_then(|node| node.cast::<AnimatedSprite>());
+        // Set puff animation
+        self.puff_animation = owner
+            .get_node(NodePath::from_str("./PuffAnimation"))
+            .and_then(|node| node.cast::<AnimatedSprite>());
     }
 
     #[export]
@@ -33,29 +45,23 @@ impl Player {
         ));
         // Rotate player anti-clockwise when jumping.
         owner.set_angular_velocity(-PI);
-        let animation = owner
-            .get_node(NodePath::from_str("./AnimatedSprite"))
-            .and_then(|node| node.cast::<AnimatedSprite>());
+        
         // Start flying animation.
-        animation
-            .expect("AnimationSprite doesnt't exist")
-            .play(GodotString::from_str("jump"), true);
-        let mut puff = owner
-            .get_node(NodePath::from_str("./PuffAnimation"))
-            .and_then(|node| node.cast::<AnimatedSprite>())
-            .expect("AnimationSprite doesnt't exist");
-        // Start flying animation.
-        puff.play(GodotString::from_str("default"), true);
-        puff.show();
+        self.jump_animation
+            .map(|mut anim| anim.play(GodotString::from_str("jump"), true));
 
+        // Play and show jump smoke.
+        self.puff_animation
+            .map(|mut anim| anim.play(GodotString::from_str("default"), true));
+        self.puff_animation.map(|mut anim| anim.show());
     }
 
     #[export]
     unsafe fn _input(&mut self, owner: RigidBody2D, event: Option<InputEvent>) {
         // Flap if space is pressed
         if event
-            .unwrap()
-            .is_action_pressed(GodotString::from_str("ui_select"), false)
+            .expect("Invalid input")
+            .is_action_pressed(GodotString::from_str("ui_flap"), false)
         {
             self.flap(owner);
         }
@@ -65,7 +71,7 @@ impl Player {
     unsafe fn _physics_process(&mut self, mut owner: RigidBody2D, _delta: f64) {
         // Asure that player can't face up more than max facing_angle
         let actual_rotation = owner.get_rotation_degrees();
-        let max_facing_angle = self.facing_angle as f64;
+        let max_facing_angle = self.max_facing_angle as f64;
 
         if actual_rotation < max_facing_angle {
             owner.set_rotation_degrees(max_facing_angle);
@@ -79,11 +85,9 @@ impl Player {
 
     // Function connected with animation_finished() event in PuffAnimation child.
     #[export]
-    unsafe fn _on_puff_animation_finished(&self, owner: RigidBody2D) {
-      owner.get_node(NodePath::from_str("./PuffAnimation"))
-            .and_then(|node| node.cast::<AnimatedSprite>())
-            .expect("AnimationSprite doesnt't exist")
-            .hide()
-
+    unsafe fn _on_puff_animation_finished(&self, _owner: RigidBody2D) {
+      // Hide jump smoke
+      self.puff_animation
+          .map(|mut anim| anim.hide());
     }
 }
