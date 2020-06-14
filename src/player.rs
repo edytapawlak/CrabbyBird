@@ -34,6 +34,8 @@ impl Player {
         self.puff_animation = owner
             .get_node(NodePath::from_str("./PuffAnimation"))
             .and_then(|node| node.cast::<AnimatedSprite>());
+        // TODO Think about horizontal velocity
+        owner.set_linear_velocity(Vector2::new(100.0, 0.0));
     }
 
     #[export]
@@ -45,7 +47,7 @@ impl Player {
         ));
         // Rotate player anti-clockwise when jumping.
         owner.set_angular_velocity(-PI);
-        
+
         // Start flying animation.
         self.jump_animation
             .map(|mut anim| anim.play(GodotString::from_str("jump"), true));
@@ -86,8 +88,7 @@ impl Player {
     // Function connected with animation_finished() event in PuffAnimation child.
     #[export]
     unsafe fn _on_puff_animation_finished(&self, _owner: RigidBody2D) {
-      // Hide jump smoke
-      self.puff_animation
-          .map(|mut anim| anim.hide());
+        // Hide jump smoke
+        self.puff_animation.map(|mut anim| anim.hide());
     }
 }
