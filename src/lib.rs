@@ -1,4 +1,6 @@
-use gdnative::*;
+use gdnative::{
+    godot_error, godot_gdnative_init, godot_gdnative_terminate, godot_nativescript_init,
+};
 
 mod game_state;
 mod player;

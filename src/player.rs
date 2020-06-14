@@ -1,4 +1,6 @@
-use gdnative::*;
+use gdnative::NativeClass;
+use gdnative::{godot_error, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods};
+use gdnative::{AnimatedSprite, GodotString, InputEvent, NodePath, RigidBody2D, Vector2};
 use std::f64::consts::PI;
 
 #[derive(NativeClass)]

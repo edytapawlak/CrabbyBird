@@ -1,6 +1,4 @@
-use gdnative::{
-    godot_error, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods,
-};
+use gdnative::{godot_error, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods};
 use gdnative::{Camera2D, NativeClass, Node2D, NodePath, RigidBody2D, Vector2};
 
 #[derive(NativeClass)]
@@ -31,8 +29,16 @@ impl GameState {
 
     #[export]
     unsafe fn _physics_process(&self, _owner: Node2D, _delta: f64) {
-        let camera_x = self.crabby.unwrap().get_global_position().x;
-        let camera_y = self.camera.unwrap().get_global_position().y;
+        let camera_x = self
+            .crabby
+            .expect("There is no crab!")
+            .get_global_position()
+            .x;
+        let camera_y = self
+            .camera
+            .expect("There is no camera!")
+            .get_global_position()
+            .y;
         match self.camera {
             Some(mut x) => x.set_global_position(Vector2::new(camera_x, camera_y)),
             None => (),
