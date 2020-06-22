@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scenes/Main.gdns" type="Script" id=1]
 [ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/background-day.png" type="Texture" id=3]
+[ext_resource path="res://scenes/BaseSpawner.tscn" type="PackedScene" id=4]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -15,6 +16,8 @@ centered = false
 [node name="Player" parent="." instance=ExtResource( 2 )]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-offset = Vector2( -122.5, 0 )
+offset = Vector2( -120, 0 )
 anchor_mode = 0
 current = true
+
+[node name="BaseSpawner" parent="." instance=ExtResource( 4 )]

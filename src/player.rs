@@ -7,6 +7,7 @@ use std::f64::consts::PI;
 #[inherit(RigidBody2D)]
 pub struct Player {
     jump_speed: f32,
+    x_speed: f32,
     max_facing_angle: f32, // Maximal facing angle in degrees.
     jump_animation: Option<AnimatedSprite>,
     puff_animation: Option<AnimatedSprite>,
@@ -17,6 +18,7 @@ impl Player {
     pub fn _init(mut _owner: RigidBody2D) -> Self {
         Player {
             jump_speed: 500.0,
+            x_speed: 100.0,
             max_facing_angle: -30.0,
             jump_animation: None,
             puff_animation: None,
@@ -36,8 +38,6 @@ impl Player {
         self.puff_animation = owner
             .get_node(NodePath::from_str("./PuffAnimation"))
             .and_then(|node| node.cast::<AnimatedSprite>());
-        // TODO Think about horizontal velocity
-        owner.set_linear_velocity(Vector2::new(100.0, 0.0));
     }
 
     #[export]
@@ -85,6 +85,9 @@ impl Player {
         if owner.get_linear_velocity().y > 0.0 {
             owner.set_angular_velocity(PI / 2.0);
         }
+        // Set horizontal velocity to move player forward with x_speed.
+        // Don't change vertical velocity.
+        owner.set_linear_velocity(Vector2::new(self.x_speed, owner.get_linear_velocity().y));
     }
 
     // Function connected with animation_finished() event in PuffAnimation child.

@@ -3,6 +3,6 @@
 [ext_resource path="res://rust_library.tres" type="GDNativeLibrary" id=1]
 
 [resource]
-resource_name = "World"
-class_name = "World"
+resource_name = "BaseSpawner"
+class_name = "BaseMenager"
 library = ExtResource( 1 )
