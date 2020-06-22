@@ -64,16 +64,45 @@ impl World {
         // Add base tile while camera is moving.
         let current_base_position = self
             .base_menager
-            .map_mut_aliased(|enemy, owner| enemy.get_current_position(owner))
+            .map_mut_aliased(|menager, owner| menager.get_current_end_position(owner))
             .unwrap();
         if current_base_position.x < camera_x + 480.0 {
             self.base_menager
-                .map_mut_aliased(|enemy, owner| enemy.add_base(owner));
+                .map_mut_aliased(|menager, owner| menager.add_base(owner));
 
-            // Update base_menager start position to remove tiles properly.
-            self.base_menager.map_mut_aliased(|enemy, owner| {
-                enemy.set_current_start_position(owner, Vector2::new(camera_x, camera_y))
-            });
+
+        // Removing tiles when they are out of view.
+        //
+        //        tile       +----------+
+        //        to         |          |
+        //        remove     | what     |
+        //          +        | camera   |
+        //          |        | see      |
+        //          v        |          |
+        //    +-----------+ +-----------+
+        //    |           | ||         ||
+        //    |  tile 1   | ||  tile 2 ||
+        //    |           | |-----------+
+        //    +-----------+ +----------+
+        //    ^  sprite   ^  ^
+        //    |  width    |  |
+        //    +< ------- >+  |
+        //    +-----------+  +
+        //                ^  camera view 
+        //                |  left corner
+        //                |  x position
+        //    base_position     
+        //       _to_remove     
+
+        let base_position_to_remove = self
+            .base_menager
+            .map_mut_aliased(|menager, owner| menager.get_position_to_remove(owner))
+            .unwrap();
+
+        if base_position_to_remove.x < camera_x {
+          self.base_menager
+          .map_mut_aliased(|menager, owner| menager.remove_base(owner));
+        }
         }
     }
 }
