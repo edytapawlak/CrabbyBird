@@ -2,7 +2,7 @@ use gdnative::{
     godot_error, godot_gdnative_init, godot_gdnative_terminate, godot_nativescript_init,
 };
 
-mod base_menager;
+mod base_manager;
 mod player;
 mod world;
 
@@ -10,7 +10,7 @@ mod world;
 fn init(handle: gdnative::init::InitHandle) {
     handle.add_class::<player::Player>();
     handle.add_class::<world::World>();
-    handle.add_class::<base_menager::BaseMenager>();
+    handle.add_class::<base_manager::BaseManager>();
 }
 
 // macros that create the entry-points of the dynamic library.

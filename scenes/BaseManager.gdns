@@ -4,5 +4,5 @@
 
 [resource]
 resource_name = "BaseSpawner"
-class_name = "BaseMenager"
+class_name = "BaseManager"
 library = ExtResource( 1 )

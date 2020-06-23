@@ -7,7 +7,7 @@ use std::collections::VecDeque;
 
 #[derive(Debug, NativeClass)]
 #[inherit(Node2D)]
-pub struct BaseMenager {
+pub struct BaseManager {
     sprite_width: f32,
     sprite_height: f32,
     current_end_pos: Vector2,
@@ -16,9 +16,9 @@ pub struct BaseMenager {
 }
 
 #[methods]
-impl BaseMenager {
+impl BaseManager {
     pub fn _init(mut _owner: Node2D) -> Self {
-        BaseMenager {
+        BaseManager {
             sprite_width: 336.0,
             sprite_height: 112.0,
             current_end_pos: Vector2::new(0.0, -112.0),
@@ -44,17 +44,40 @@ impl BaseMenager {
         }
     }
 
+    // Position of right-bottom corner of the last tile in current_tiles.
     #[export]
-    pub unsafe fn add_base(&mut self, mut owner: Node2D) {
+    pub fn get_position_to_add(&mut self, _owner: Node2D) -> Vector2 {
+        self.current_end_pos
+    }
+
+    // Position of right-bottom corner of first tile in current_tiles.
+    pub fn get_position_to_remove(&self, _owner: Node2D) -> Vector2 {
+        match self.current_tiles.front() {
+            Some(tile) => unsafe {
+                tile.get_global_position() + Vector2::new(self.sprite_width, 0.0)
+            },
+            None => {
+                godot_print!("There are no ground tiles.");
+                Vector2::new(0.0, 0.0)
+            }
+        }
+    }
+
+    #[export]
+    pub fn add_base(&mut self, mut owner: Node2D) {
         match &self.base_scene {
             Some(scene) => {
                 // Get base scene instance and cast it to StaticBody2D.
-                let instance = scene.instance(0).and_then(|x| x.cast::<StaticBody2D>());
+                let instance = scene
+                    .instance(0)
+                    .and_then(|x| unsafe { x.cast::<StaticBody2D>() });
                 if let Some(mut ins) = instance {
-                    ins.set_position(self.current_end_pos);
-                    // Add StaticBody2D to the game.
-                    owner.add_child(Some(ins.to_node()), false);
-                    // Update current position of spawner.
+                    unsafe {
+                        ins.set_position(self.current_end_pos);
+                        // Add StaticBody2D to the game.
+                        owner.add_child(Some(ins.to_node()), false);
+                    }
+                    // Update current position of manager.
                     self.current_end_pos += Vector2::new(self.sprite_width, 0.0);
                     self.current_tiles.push_back(ins);
                 } else {
@@ -65,24 +88,8 @@ impl BaseMenager {
         }
     }
 
-    // Position of right-bottom corner of the last tile in current_tiles. 
-    #[export]
-    pub fn get_current_end_position(&mut self, _owner: Node2D) -> Vector2 {
-        self.current_end_pos
-    }
-
-    // Position of right-bottom corner of first tile in current_tiles.
-    pub fn get_position_to_remove(&self, _owner: Node2D) -> Vector2 {
-        match self.current_tiles.front() {
-            Some(tile) => unsafe { tile.get_global_position() + Vector2::new(self.sprite_width, 0.0) },
-            None => {
-                godot_print!("There are no ground tiles.");
-                Vector2::new(0.0, 0.0)
-            }
-        }
-    }
-
     pub fn remove_base(&mut self, _owner: Node2D) {
-      unsafe {self.current_tiles.pop_front().unwrap().queue_free()};
+        godot_print!("len: {}", self.current_tiles.len());
+        unsafe { self.current_tiles.pop_front().unwrap().queue_free() };
     }
 }

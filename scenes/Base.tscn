@@ -7,9 +7,6 @@ extents = Vector2( 168, 56 )
 
 [node name="Base" type="StaticBody2D"]
 position = Vector2( 0, -112 )
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 168, 56 )
