@@ -7,6 +7,7 @@ use gdnative::{Camera2D, Instance, NativeClass, Node2D, NodePath, RigidBody2D, V
 #[derive(NativeClass)]
 #[inherit(Node2D)]
 pub struct World {
+    screen_size: Vector2<>,
     crabby: Option<RigidBody2D>,
     camera: Option<Camera2D>,
     // A reference to a GodotObject with a Rust NativeClass attached.
@@ -17,6 +18,7 @@ pub struct World {
 impl World {
     pub fn _init(_owner: Node2D) -> Self {
         World {
+            screen_size: Vector2::zero(),
             crabby: None,
             camera: None,
             base_manager: Instance::new(),
@@ -25,6 +27,7 @@ impl World {
 
     #[export]
     unsafe fn _ready(&mut self, owner: Node2D) {
+        self.screen_size = Vector2::new(480.0, 720.0);//owner.get_viewport().unwrap().get_size();
         self.crabby = owner
             .get_node(NodePath::from_str("./Player"))
             .and_then(|n| n.cast::<RigidBody2D>());
@@ -66,7 +69,7 @@ impl World {
             .base_manager
             .map_mut_aliased(|manager, owner| manager.get_position_to_add(owner))
             .unwrap();
-        if current_base_position.x < camera_x + 3. / 4. * 480.0 {
+        if current_base_position.x < camera_x + 0.75 * self.screen_size.x {
             // Call function from BaseMenager.
             self.base_manager
                 .map_mut_aliased(|manager, owner| manager.add_base(owner));
@@ -74,7 +77,7 @@ impl World {
 
         // Removing tiles when they are out of view.
         //
-        //        tile       +----------+
+        //        tile       +----------+z
         //        to         |          |
         //        remove     | what     |
         //          +        | camera   |
@@ -100,7 +103,7 @@ impl World {
             .map_mut_aliased(|manager, owner| manager.get_position_to_remove(owner))
             .unwrap();
 
-        if base_position_to_remove.x < camera_x - 120. {
+        if base_position_to_remove.x < camera_x - 0.25 * self.screen_size.x {
             self.base_manager
                 .map_mut_aliased(|manager, owner| manager.remove_base(owner));
         }
