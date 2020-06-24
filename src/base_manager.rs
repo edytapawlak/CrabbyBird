@@ -53,7 +53,7 @@ impl BaseManager {
                 )
             },
             None => {
-                godot_print!("There are no ground tiles.");
+                // There are no ground tiles.
                 Vector2::new(0.0, -self.sprite_height)
             }
         }
@@ -66,7 +66,7 @@ impl BaseManager {
                 tile.get_global_position() + Vector2::new(self.sprite_width, 0.0)
             },
             None => {
-                godot_print!("There are no ground tiles.");
+                // There are no ground tiles.
                 Vector2::new(self.sprite_width, 0.0)
             }
         }
@@ -92,13 +92,17 @@ impl BaseManager {
                     godot_print!("Problem with casting baseScene to StaticBody2D");
                 }
             }
-            None => godot_print!("Problem with loading base scene."),
+            None => {
+                godot_print!("Problem with loading base scene.");
+            }
         }
     }
 
     pub fn remove_base(&mut self, _owner: Node2D) {
         // Prevent removing first tile to avoid a gap when the game starts.
         if self.current_tiles.len() > 1 {
+            // Tolerate unwrap here, because we checked that
+            // there are at least two elements in `current_tiles`
             unsafe { self.current_tiles.pop_front().unwrap().queue_free() };
         }
     }

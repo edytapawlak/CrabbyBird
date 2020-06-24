@@ -45,7 +45,8 @@ impl World {
         match base_manager {
             Some(base) => {
                 // Downcast a Godot base class to a NativeScript instance -- Instance<BaseManager>.
-                self.base_manager = Instance::try_from_unsafe_base(base).expect("No way");
+                self.base_manager = Instance::try_from_unsafe_base(base)
+                    .expect("Failure to downcast Node2D to BaseMenager");
             }
             None => godot_print!("Problem with loading BaseManager node."),
         }
@@ -58,26 +59,28 @@ impl World {
             .expect("There is no crab!")
             .get_global_position()
             .x;
-        let camera_y = self
-            .camera
-            .expect("There is no camera!")
-            .get_global_position()
-            .y;
+
+        let mut camera_offset = 0.0;
         match self.camera {
-            Some(mut x) => x.set_global_position(Vector2::new(camera_x, camera_y)),
-            None => (),
+            Some(mut cam) => {
+                let cam_y = cam.get_global_position().y;
+                cam.set_global_position(Vector2::new(camera_x, cam_y));
+                camera_offset = cam.get_offset().x;
+            }
+            None => godot_print!("There is no camera."),
         }
 
         // Add base tile while camera is moving.
         let current_base_position = self
             .base_manager
             .map_mut_aliased(|manager, owner| manager.get_position_to_add(owner))
-            .unwrap();
-        let camera_offset = self.camera.expect("There is no camera.").get_offset().x;
+            .expect("Can't call menager's function: `get_position_to_add`");
+
         if current_base_position.x < camera_x + (self.screen_size.x + camera_offset) {
             // Call function from BaseMenager.
             self.base_manager
-                .map_mut_aliased(|manager, owner| manager.add_base(owner));
+                .map_mut_aliased(|manager, owner| manager.add_base(owner))
+                .expect("Can't call menager's function: `add_base`");
         }
 
         // Removing tiles when they are out of view.
@@ -106,11 +109,12 @@ impl World {
         let base_position_to_remove = self
             .base_manager
             .map_mut_aliased(|manager, owner| manager.get_position_to_remove(owner))
-            .unwrap();
+            .expect("Can't call menager's function: `get_position_to_remove`");
 
         if base_position_to_remove.x < camera_x + camera_offset {
             self.base_manager
-                .map_mut_aliased(|manager, owner| manager.remove_base(owner));
+                .map_mut_aliased(|manager, owner| manager.remove_base(owner))
+                .expect("Can't call menager's function: `remove_base`");
         }
     }
 }
