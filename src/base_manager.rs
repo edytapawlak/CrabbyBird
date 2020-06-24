@@ -40,20 +40,23 @@ impl BaseManager {
             None => godot_print!("Failure loading base"),
             _ => self.base_scene = base_scene,
         }
-  }
+    }
 
     // Position of right-bottom corner of the last tile in current_tiles.
     #[export]
     pub fn get_position_to_add(&mut self, _owner: Node2D) -> Vector2 {
         match self.current_tiles.back() {
-          Some(tile) => unsafe {
-              Vector2::new(tile.get_global_position().x + self.sprite_width, -self.sprite_height)
-          },
-          None => {
-              godot_print!("There are no ground tiles.");
-              Vector2::new(0.0, -self.sprite_height)
-          }
-      }
+            Some(tile) => unsafe {
+                Vector2::new(
+                    tile.get_global_position().x + self.sprite_width,
+                    -self.sprite_height,
+                )
+            },
+            None => {
+                godot_print!("There are no ground tiles.");
+                Vector2::new(0.0, -self.sprite_height)
+            }
+        }
     }
 
     // Position of right-bottom corner of first tile in current_tiles.
@@ -94,9 +97,9 @@ impl BaseManager {
     }
 
     pub fn remove_base(&mut self, _owner: Node2D) {
-      // Prevent removing first tile to avoid a gap when the game starts.
-      if self.current_tiles.len() > 1 {
-        unsafe { self.current_tiles.pop_front().unwrap().queue_free() };
-      }
+        // Prevent removing first tile to avoid a gap when the game starts.
+        if self.current_tiles.len() > 1 {
+            unsafe { self.current_tiles.pop_front().unwrap().queue_free() };
+        }
     }
 }
