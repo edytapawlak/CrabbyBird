@@ -4,7 +4,7 @@
 [ext_resource path="res://scenes/Pipe.gdns" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 24, 160 )
+extents = Vector2( 23.0896, 160 )
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 24, 160 )
@@ -16,21 +16,24 @@ __meta__ = {
 }
 
 [node name="PipeDown" type="Sprite" parent="."]
-position = Vector2( 0, 250 )
+position = Vector2( 0, 90 )
 texture = ExtResource( 1 )
+centered = false
 
 [node name="PipeUp" type="Sprite" parent="."]
-position = Vector2( -8, -250 )
+position = Vector2( 52, -90 )
 rotation = -3.14159
 texture = ExtResource( 1 )
+centered = false
 
 [node name="col_pipe_up" type="CollisionShape2D" parent="."]
-position = Vector2( -8, -256 )
+position = Vector2( 26.2752, -250.844 )
 shape = SubResource( 1 )
 
 [node name="col_pipe_down" type="CollisionShape2D" parent="."]
-position = Vector2( 0, 256 )
+position = Vector2( 25.7064, 250.881 )
 shape = SubResource( 2 )
 
 [node name="Notifier" type="VisibilityNotifier2D" parent="."]
-[connection signal="screen_exited" from="Notifier" to="." method="_on_Notifier_screen_exited"]
+position = Vector2( 52, 0 )
+[connection signal="screen_exited" from="Notifier" to="." method="_on_notifier_screen_exited"]

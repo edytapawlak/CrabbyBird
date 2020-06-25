@@ -1,4 +1,5 @@
 use crate::base_manager::BaseManager;
+use crate::pipe_manager::PipeManager;
 use gdnative::{
     godot_error, godot_print, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods,
 };
@@ -12,6 +13,8 @@ pub struct World {
     camera: Option<Camera2D>,
     // A reference to a GodotObject with a Rust NativeClass attached.
     base_manager: Instance<BaseManager>,
+    pipe_manager: Instance<PipeManager>,
+    pipe_density: f32,
 }
 
 #[methods]
@@ -22,6 +25,8 @@ impl World {
             crabby: None,
             camera: None,
             base_manager: Instance::new(),
+            pipe_manager: Instance::new(),
+            pipe_density: 300.0,
         }
     }
 
@@ -49,6 +54,19 @@ impl World {
                     .expect("Failure to downcast Node2D to BaseMenager");
             }
             None => godot_print!("Problem with loading BaseManager node."),
+        }
+
+        let pipe_manager = owner
+            .get_node(NodePath::from_str("./PipeManager"))
+            .and_then(|n| n.cast::<Node2D>());
+
+        match pipe_manager {
+            Some(manager) => {
+                // Downcast a Godot base class to a NativeScript instance -- Instance<BaseManager>.
+                self.pipe_manager = Instance::try_from_unsafe_base(manager)
+                    .expect("Failure to downcast Node2D to PipeManager");
+            }
+            None => godot_print!("Problem with loading PipeManager node."),
         }
     }
 
@@ -115,6 +133,21 @@ impl World {
             self.base_manager
                 .map_mut_aliased(|manager, owner| manager.remove_base(owner))
                 .expect("Can't call menager's function: `remove_base`");
+        }
+
+        // Pipe management
+        let current_pipe_position = self
+            .pipe_manager
+            .map_mut_aliased(|manager, owner| manager.get_current_pipe_pos(owner))
+            .expect("Can't call menager's function: `get_current_pipe_pos`");
+
+        if (self.screen_size.x + camera_x - current_pipe_position.x) > self.pipe_density {
+            // Call function from PipeManager.
+            self.pipe_manager
+                .map_mut_aliased(|manager, owner| {
+                    manager.add_pipe(owner, self.pipe_density, self.screen_size.y, 112.0)
+                })
+                .expect("Can't call menager's function: `add_pipe`");
         }
     }
 }

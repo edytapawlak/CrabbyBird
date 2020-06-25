@@ -3,10 +3,10 @@ use gdnative::{
 };
 
 mod base_manager;
+mod pipe;
+mod pipe_manager;
 mod player;
 mod world;
-mod pipe_manager;
-mod pipe;
 
 // Function that registers all exposed classes to Godot
 fn init(handle: gdnative::init::InitHandle) {
