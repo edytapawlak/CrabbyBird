@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scenes/Main.gdns" type="Script" id=1]
 [ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/Background.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/BaseManager.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/PipeManager.tscn" type="PackedScene" id=5]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -33,3 +34,6 @@ __meta__ = {
 [node name="BaseManager" parent="." instance=ExtResource( 4 )]
 
 [node name="Background" parent="." instance=ExtResource( 3 )]
+
+[node name="PipeManager" parent="." instance=ExtResource( 5 )]
+position = Vector2( 0, 360 )
