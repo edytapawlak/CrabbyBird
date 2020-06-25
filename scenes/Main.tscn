@@ -14,22 +14,6 @@ script = ExtResource( 1 )
 anchor_mode = 0
 current = true
 
-[node name="Camera2D2" type="Camera2D" parent="Camera2D"]
-visible = false
-offset = Vector2( -500, 0 )
-anchor_mode = 0
-
-[node name="ColorRect" type="ColorRect" parent="Camera2D"]
-visible = false
-margin_left = -120.0
-margin_top = -3.0
-margin_right = 359.0
-margin_bottom = 717.0
-color = Color( 0.576471, 0.482353, 0.482353, 0.27451 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="BaseManager" parent="." instance=ExtResource( 4 )]
 
 [node name="Background" parent="." instance=ExtResource( 3 )]
