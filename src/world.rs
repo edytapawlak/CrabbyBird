@@ -36,6 +36,7 @@ impl World {
         self.crabby = owner
             .get_node(NodePath::from_str("./Player"))
             .and_then(|n| n.cast::<RigidBody2D>());
+
         self.camera = owner
             .get_node(NodePath::from_str("./Camera2D"))
             .and_then(|n| n.cast::<Camera2D>());
@@ -46,12 +47,13 @@ impl World {
         let base_manager = owner
             .get_node(NodePath::from_str("./BaseManager"))
             .and_then(|n| n.cast::<Node2D>());
+        base_manager.map(|mut man| man.set_global_position(Vector2::new(0.0, self.screen_size.y)));
 
         match base_manager {
             Some(base) => {
                 // Downcast a Godot base class to a NativeScript instance -- Instance<BaseManager>.
                 self.base_manager = Instance::try_from_unsafe_base(base)
-                    .expect("Failure to downcast Node2D to BaseMenager");
+                    .expect("Failure to downcast Node2D to BaseMenager")
             }
             None => godot_print!("Problem with loading BaseManager node."),
         }
@@ -59,6 +61,7 @@ impl World {
         let pipe_manager = owner
             .get_node(NodePath::from_str("./PipeManager"))
             .and_then(|n| n.cast::<Node2D>());
+        pipe_manager.map(|mut man| man.set_global_position(Vector2::new(0.0, self.screen_size.y)));
 
         match pipe_manager {
             Some(manager) => {
@@ -144,9 +147,7 @@ impl World {
         if (self.screen_size.x + camera_x - current_pipe_position.x) > self.pipe_density {
             // Call function from PipeManager.
             self.pipe_manager
-                .map_mut_aliased(|manager, owner| {
-                    manager.add_pipe(owner, self.pipe_density, self.screen_size.y, 112.0)
-                })
+                .map_mut_aliased(|manager, owner| manager.add_pipe(owner, self.pipe_density, 112.0))
                 .expect("Can't call menager's function: `add_pipe`");
         }
     }

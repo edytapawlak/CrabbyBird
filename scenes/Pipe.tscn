@@ -4,16 +4,21 @@
 [ext_resource path="res://scenes/Pipe.gdns" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 23.0896, 160 )
+extents = Vector2( 24, 317.948 )
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 24, 160 )
+extents = Vector2( 23.0896, 318.39 )
 
 [node name="Pipe" type="StaticBody2D"]
 script = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
+
+[node name="col_pipe_down" type="CollisionShape2D" parent="."]
+position = Vector2( 25.7064, 410.881 )
+shape = SubResource( 1 )
+
+[node name="col_pipe_up" type="CollisionShape2D" parent="."]
+position = Vector2( 26.2752, -408.739 )
+shape = SubResource( 2 )
 
 [node name="PipeDown" type="Sprite" parent="."]
 position = Vector2( 0, 90 )
@@ -25,14 +30,6 @@ position = Vector2( 52, -90 )
 rotation = -3.14159
 texture = ExtResource( 1 )
 centered = false
-
-[node name="col_pipe_up" type="CollisionShape2D" parent="."]
-position = Vector2( 26.2752, -250.844 )
-shape = SubResource( 1 )
-
-[node name="col_pipe_down" type="CollisionShape2D" parent="."]
-position = Vector2( 25.7064, 250.881 )
-shape = SubResource( 2 )
 
 [node name="Notifier" type="VisibilityNotifier2D" parent="."]
 position = Vector2( 52, 0 )

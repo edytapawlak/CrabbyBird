@@ -8,19 +8,21 @@ use rand::{thread_rng, Rng};
 #[derive(Debug, NativeClass)]
 #[inherit(Node2D)]
 pub struct PipeManager {
-    pipe_current: Vector2,
+    last_pipe_position: Vector2,
     pipe_scene: Option<PackedScene>,
-    sprite_height: f32,
-    pipe_offset: f32,
+    maximal_sprite_height: f32, // Maximal pipe height.
+    minimal_sprite_height: f32, // Minimal pipe height.
+    pipe_offset: f32,           // Half of space between up and down pipe.
 }
 
 #[methods]
 impl PipeManager {
     pub fn _init(mut _owner: Node2D) -> Self {
         PipeManager {
-            pipe_current: Vector2::new(480.0, 0.0),
+            last_pipe_position: Vector2::new(480.0, 0.0),
             pipe_scene: None,
-            sprite_height: 320.0,
+            maximal_sprite_height: 640.0,
+            minimal_sprite_height: 50.0,
             pipe_offset: 90.0,
         }
     }
@@ -43,41 +45,45 @@ impl PipeManager {
     }
 
     pub fn get_current_pipe_pos(&self, _owner: Node2D) -> Vector2 {
-        self.pipe_current
+        self.last_pipe_position
     }
 
     #[export]
-    pub fn add_pipe(
-        &mut self,
-        mut owner: Node2D,
-        pipe_density: f32,
-        screen_height: f32,
-        screen_bottom_margin: f32,
-    ) {
+    pub fn add_pipe(&mut self, mut owner: Node2D, pipe_density: f32, screen_bottom_margin: f32) {
         match &self.pipe_scene {
             Some(scene) => {
-                // Get base scene instance and cast it to StaticBody2D.
+                // Get pipe scene instance and cast it to StaticBody2D.
                 let instance = scene
                     .instance(0)
                     .and_then(|x| unsafe { x.cast::<StaticBody2D>() });
-                if let Some(mut ins) = instance {
-                    let top_margin = -screen_height + self.sprite_height + self.pipe_offset;
-                    let bottom_margin =
-                        -screen_bottom_margin - self.sprite_height - self.pipe_offset;
 
-                    let mut rng = thread_rng();
-                    self.pipe_current += Vector2::new(pipe_density, 0.0);
-                    self.pipe_current.y = rng.gen_range(bottom_margin, top_margin);
+                if let Some(mut ins) = instance {
                     unsafe {
-                        ins.set_position(self.pipe_current);
+                        // Calculate range of the pipe y position.
+                        let screen_height = owner.get_global_position().y;
+                        let top_margin =
+                            -(screen_height - (self.minimal_sprite_height + self.pipe_offset));
+                        let bottom_margin =
+                            -(screen_bottom_margin + (self.minimal_sprite_height + self.pipe_offset));
+
+                        // Choose random y position in given range.
+                        let mut rng = thread_rng();
+                        self.last_pipe_position += Vector2::new(pipe_density, 0.0);
+
+                        // Update last pipe of the manager
+                        // Top and bottom margins are negative, so order is reverse.
+                        self.last_pipe_position.y = rng.gen_range(top_margin, bottom_margin);
+
+                        // Set pipe position and add it to a scene.
+                        ins.set_position(self.last_pipe_position);
                         owner.add_child(Some(ins.to_node()), false);
                     }
                 } else {
-                    godot_print!("Problem with casting baseScene to StaticBody2D");
+                    godot_print!("Problem with casting Pipe scene to StaticBody2D");
                 }
             }
             None => {
-                godot_print!("Problem with loading pipe scene.");
+                godot_print!("Problem with loading Pipe scene.");
             }
         }
     }
