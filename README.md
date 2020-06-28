@@ -12,7 +12,7 @@ Project is under active development, more features soon.
 Use Cargo package menager to build the Rust library by running `cargo build` from CrabbyBird directory.
 Then open the project in Godot editor and run it.
 
-## Project as tutorial
+## Commit roadmap
 
 If you want to use this repo as tutorial, here's a list of development stages:
 
