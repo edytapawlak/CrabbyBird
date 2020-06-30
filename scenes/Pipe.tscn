@@ -33,5 +33,5 @@ position = Vector2( 26.2026, 369.444 )
 shape = SubResource( 2 )
 
 [node name="Notifier" type="VisibilityNotifier2D" parent="."]
-position = Vector2( 52, 0 )
+position = Vector2( 120, 0 )
 [connection signal="screen_exited" from="Notifier" to="." method="_on_notifier_screen_exited"]
