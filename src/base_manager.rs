@@ -105,12 +105,8 @@ impl BaseManager {
         }
     }
 
-    pub fn manage_base(
-        &mut self,
-        owner: Node2D,
-        camera_x_range: (f32, f32),
-    ) {
-        // Add base tile while camera is moving.
+    pub fn manage_base(&mut self, owner: Node2D, camera_x_range: (f32, f32)) {
+        // Add base tile if it is needed.
         let current_base_position = self.get_position_to_add(owner);
         if current_base_position.x < camera_x_range.1 {
             self.add_base(owner);

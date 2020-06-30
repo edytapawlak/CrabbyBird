@@ -85,7 +85,7 @@ impl PipeManager {
         }
     }
 
-    pub unsafe fn manage_pipes(&mut self, owner: Node2D, control_position : f32) {
+    pub unsafe fn manage_pipes(&mut self, owner: Node2D, control_position: f32) {
         // Pipe management
         // TODO Set bottom_margin more clever than 112.
 
