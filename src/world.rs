@@ -14,7 +14,6 @@ pub struct World {
     // A reference to a GodotObject with a Rust NativeClass attached.
     base_manager: Instance<BaseManager>,
     pipe_manager: Instance<PipeManager>,
-    pipe_density: f32,
 }
 
 #[methods]
@@ -26,7 +25,6 @@ impl World {
             camera: None,
             base_manager: Instance::new(),
             pipe_manager: Instance::new(),
-            pipe_density: 300.0,
         }
     }
 
@@ -65,7 +63,7 @@ impl World {
 
         match pipe_manager {
             Some(manager) => {
-                // Downcast a Godot base class to a NativeScript instance -- Instance<BaseManager>.
+                // Downcast a Godot base class to a NativeScript instance -- Instance<PipeManager>.
                 self.pipe_manager = Instance::try_from_unsafe_base(manager)
                     .expect("Failure to downcast Node2D to PipeManager");
             }
@@ -81,74 +79,33 @@ impl World {
             .get_global_position()
             .x;
 
-        let mut camera_offset = 0.0;
+        // Start and end x position of what camera can see.
+        let mut camera_x_range = (0.0, 0.0);
         match self.camera {
             Some(mut cam) => {
                 let cam_y = cam.get_global_position().y;
                 cam.set_global_position(Vector2::new(camera_x, cam_y));
-                camera_offset = cam.get_offset().x;
+                camera_x_range.0 = camera_x + cam.get_offset().x;
+                camera_x_range.1 = camera_x_range.0 + self.screen_size.x;
             }
             None => godot_print!("There is no camera."),
         }
 
-        // Add base tile while camera is moving.
-        let current_base_position = self
-            .base_manager
-            .map_mut_aliased(|manager, owner| manager.get_position_to_add(owner))
-            .expect("Can't call menager's function: `get_position_to_add`");
+        // Base management.
+        self.base_manager
+            .map_mut_aliased(|manager, owner| {
+                manager.manage_base(owner, camera_x_range)
+            })
+            .expect("Can't call menager's function: `manage_base`");
+        // Pipes management.
 
-        if current_base_position.x < camera_x + (self.screen_size.x + camera_offset) {
-            // Call function from BaseMenager.
-            self.base_manager
-                .map_mut_aliased(|manager, owner| manager.add_base(owner))
-                .expect("Can't call menager's function: `add_base`");
-        }
-
-        // Removing tiles when they are out of view.
-        //
-        //        tile       +----------+z
-        //        to         |          |
-        //        remove     | what     |
-        //          +        | camera   |
-        //          |        | see      |
-        //          v        |          |
-        //    +-----------+ +-----------+
-        //    |           | ||         ||
-        //    |  tile 1   | ||  tile 2 ||
-        //    |           | |-----------+
-        //    +-----------+ +----------+
-        //    ^  sprite   ^  ^
-        //    |  width    |  |
-        //    +< ------- >+  |
-        //    +-----------+  +
-        //                ^  camera view
-        //                |  left corner
-        //                |  x position
-        //    base_position
-        //       _to_remove
-
-        let base_position_to_remove = self
-            .base_manager
-            .map_mut_aliased(|manager, owner| manager.get_position_to_remove(owner))
-            .expect("Can't call menager's function: `get_position_to_remove`");
-
-        if base_position_to_remove.x < camera_x + camera_offset {
-            self.base_manager
-                .map_mut_aliased(|manager, owner| manager.remove_base(owner))
-                .expect("Can't call menager's function: `remove_base`");
-        }
-
-        // Pipe management
-        let current_pipe_position = self
-            .pipe_manager
-            .map_mut_aliased(|manager, owner| manager.get_current_pipe_pos(owner))
-            .expect("Can't call menager's function: `get_current_pipe_pos`");
-
-        if (self.screen_size.x + camera_x - current_pipe_position.x) > self.pipe_density {
-            // Call function from PipeManager.
-            self.pipe_manager
-                .map_mut_aliased(|manager, owner| manager.add_pipe(owner, self.pipe_density, 112.0))
-                .expect("Can't call menager's function: `add_pipe`");
-        }
+        // Position behind the camera view in which we decide if new pipe is needed.
+        // It is camera position translated by vector (0, screen_width).
+        let control_position = self.screen_size.x + camera_x;
+        self.pipe_manager
+            .map_mut_aliased(|manager, owner| {
+                manager.manage_pipes(owner, control_position)
+            })
+            .expect("Can't call menager's function: `manage_pipes`");
     }
 }

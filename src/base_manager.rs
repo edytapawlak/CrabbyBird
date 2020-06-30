@@ -43,8 +43,7 @@ impl BaseManager {
     }
 
     // Position of right-bottom corner of the last tile in current_tiles.
-    #[export]
-    pub fn get_position_to_add(&mut self, _owner: Node2D) -> Vector2 {
+    fn get_position_to_add(&mut self, _owner: Node2D) -> Vector2 {
         match self.current_tiles.back() {
             Some(tile) => unsafe {
                 Vector2::new(
@@ -60,7 +59,7 @@ impl BaseManager {
     }
 
     // Position of right-bottom corner of first tile in current_tiles.
-    pub fn get_position_to_remove(&self, _owner: Node2D) -> Vector2 {
+    fn get_position_to_remove(&self, _owner: Node2D) -> Vector2 {
         match self.current_tiles.front() {
             Some(tile) => unsafe {
                 tile.get_global_position() + Vector2::new(self.sprite_width, 0.0)
@@ -72,8 +71,7 @@ impl BaseManager {
         }
     }
 
-    #[export]
-    pub fn add_base(&mut self, mut owner: Node2D) {
+    fn add_base(&mut self, mut owner: Node2D) {
         match &self.base_scene {
             Some(scene) => {
                 // Get base scene instance and cast it to StaticBody2D.
@@ -98,12 +96,30 @@ impl BaseManager {
         }
     }
 
-    pub fn remove_base(&mut self, _owner: Node2D) {
+    fn remove_base(&mut self, _owner: Node2D) {
         // Prevent removing first tile to avoid a gap when the game starts.
         if self.current_tiles.len() > 1 {
             // Tolerate unwrap here, because we checked that
             // there are at least two elements in `current_tiles`
             unsafe { self.current_tiles.pop_front().unwrap().queue_free() };
+        }
+    }
+
+    pub fn manage_base(
+        &mut self,
+        owner: Node2D,
+        camera_x_range: (f32, f32),
+    ) {
+        // Add base tile while camera is moving.
+        let current_base_position = self.get_position_to_add(owner);
+        if current_base_position.x < camera_x_range.1 {
+            self.add_base(owner);
+        }
+
+        // Removing tiles when they are out of view.
+        let base_position_to_remove = self.get_position_to_remove(owner);
+        if base_position_to_remove.x < camera_x_range.0 {
+            self.remove_base(owner);
         }
     }
 }

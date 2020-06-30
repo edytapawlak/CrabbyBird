@@ -13,6 +13,7 @@ pub struct PipeManager {
     maximal_sprite_height: f32, // Maximal pipe height.
     minimal_sprite_height: f32, // Minimal pipe height.
     pipe_offset: f32,           // Half of space between up and down pipe.
+    pipe_density: f32,
 }
 
 #[methods]
@@ -24,6 +25,7 @@ impl PipeManager {
             maximal_sprite_height: 640.0,
             minimal_sprite_height: 50.0,
             pipe_offset: 45.0,
+            pipe_density: 300.0,
         }
     }
 
@@ -44,12 +46,7 @@ impl PipeManager {
         };
     }
 
-    pub fn get_current_pipe_pos(&self, _owner: Node2D) -> Vector2 {
-        self.last_pipe_position
-    }
-
-    #[export]
-    pub fn add_pipe(&mut self, mut owner: Node2D, pipe_density: f32, screen_bottom_margin: f32) {
+    fn add_pipe(&mut self, mut owner: Node2D, pipe_density: f32, screen_bottom_margin: f32) {
         match &self.pipe_scene {
             Some(scene) => {
                 // Get pipe scene instance and cast it to StaticBody2D.
@@ -63,8 +60,8 @@ impl PipeManager {
                         let screen_height = owner.get_global_position().y;
                         let top_margin =
                             -(screen_height - (self.minimal_sprite_height + self.pipe_offset));
-                        let bottom_margin =
-                            -(screen_bottom_margin + (self.minimal_sprite_height + self.pipe_offset));
+                        let bottom_margin = -(screen_bottom_margin
+                            + (self.minimal_sprite_height + self.pipe_offset));
 
                         // Choose random y position in given range.
                         let mut rng = thread_rng();
@@ -85,6 +82,15 @@ impl PipeManager {
             None => {
                 godot_print!("Problem with loading Pipe scene.");
             }
+        }
+    }
+
+    pub unsafe fn manage_pipes(&mut self, owner: Node2D, control_position : f32) {
+        // Pipe management
+        // TODO Set bottom_margin more clever than 112.
+
+        if (control_position - self.last_pipe_position.x) > self.pipe_density {
+            self.add_pipe(owner, self.pipe_density, 112.0);
         }
     }
 }
