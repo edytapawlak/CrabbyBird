@@ -3,7 +3,7 @@ use gdnative::{
     godot_error, godot_print, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods,
 };
 use gdnative::{
-    Camera2D, Instance, NativeClass, Node2D, NodePath, RigidBody2D,
+    Camera2D, GodotString, Instance, NativeClass, Node2D, NodePath, RigidBody2D, VariantArray,
     Vector2,
 };
 
@@ -54,10 +54,40 @@ impl Game {
             Some(w) => {
                 // Downcast a Godot base class to a NativeScript instance -- Instance<BaseManager>.
                 self.world =
-                    Instance::try_from_unsafe_base(w).expect("Failure to downcast Node2D to World")
+                    Instance::try_from_unsafe_base(w).expect("Failure to downcast Node2D to World");
+                // Connect signal to start generating pipes.
+                self.crabby
+                    .expect("There are no crabby.")
+                    .connect(
+                        GodotString::from_str("control_start"),
+                        Some(w.to_object()),
+                        GodotString::from_str("notify"),
+                        VariantArray::new(),
+                        0,
+                    )
+                    .unwrap();
+                // TODO Remove unwrap.
             }
             None => godot_print!("Problem with loading World node."),
         }
+        // Connect game over signal.
+        // TODO Remove unwrap.
+        self.crabby
+            .expect("The're are no crabby.")
+            .connect(
+                GodotString::from_str("player_collision"),
+                Some(owner.to_object()),
+                GodotString::from_str("notify"),
+                VariantArray::new(),
+                0,
+            )
+            .unwrap();
+    }
+
+    #[export]
+    fn notify(&mut self, mut _owner: gdnative::Node2D) {
+        godot_print!("Game Over!")
+        // TODO game over.
     }
 
     #[export]

@@ -19,7 +19,7 @@ impl Pipe {
         self.notifier = owner
             .get_node(NodePath::from_str("./Notifier"))
             .and_then(|n| n.cast::<VisibilityNotifier2D>());
-        owner.set_collision_layer(2);
+        owner.set_collision_layer(2); // 2^1
         owner.set_collision_mask(0);
     }
 

@@ -11,6 +11,7 @@ pub struct World {
     // A reference to a GodotObject with a Rust NativeClass attached.
     base_manager: Instance<BaseManager>,
     pipe_manager: Instance<PipeManager>,
+    obstacle_status: bool,
 }
 
 #[methods]
@@ -19,7 +20,14 @@ impl World {
         World {
             base_manager: Instance::new(),
             pipe_manager: Instance::new(),
+            obstacle_status: false,
         }
+    }
+
+    #[export]
+    fn notify(&mut self, mut _owner: Node2D) {
+        // Start obstales generation.
+        self.obstacle_status = true;
     }
 
     #[export]
@@ -62,8 +70,10 @@ impl World {
             .expect("Can't call menager's function: `manage_base`");
 
         // Pipes management.
-        self.pipe_manager
-            .map_mut_aliased(|manager, owner| manager.manage_pipes(owner, control_position))
-            .expect("Can't call menager's function: `manage_pipes`");
+        if self.obstacle_status {
+            self.pipe_manager
+                .map_mut_aliased(|manager, owner| manager.manage_pipes(owner, control_position))
+                .expect("Can't call menager's function: `manage_pipes`");
+        }
     }
 }

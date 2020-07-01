@@ -20,7 +20,8 @@ pub struct PipeManager {
 impl PipeManager {
     pub fn _init(mut _owner: Node2D) -> Self {
         PipeManager {
-            last_pipe_position: Vector2::new(480.0, 0.0),
+            last_pipe_position: Vector2::new(0.0, 0.0), // Default value which means that
+                                                        // pipe generation hasn't started yet.
             pipe_scene: None,
             maximal_sprite_height: 640.0,
             minimal_sprite_height: 50.0,
@@ -89,6 +90,11 @@ impl PipeManager {
         // Pipe management
         // TODO Set bottom_margin more clever than 112.
 
+        // Check if there are any pipes.
+        // 0.0 is default x position which means there aren't any pipes yet.
+        if self.last_pipe_position.x == 0.0 {
+            self.last_pipe_position.x = control_position;
+        }
         if (control_position - self.last_pipe_position.x) > self.pipe_density {
             self.add_pipe(owner, self.pipe_density, 112.0);
         }

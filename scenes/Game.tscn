@@ -17,6 +17,5 @@ current = true
 [node name="World" parent="." instance=ExtResource( 2 )]
 
 [node name="Player" parent="." instance=ExtResource( 3 )]
-collision_mask = 2
 contacts_reported = 20
 contact_monitor = true
