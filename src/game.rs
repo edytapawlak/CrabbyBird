@@ -2,7 +2,10 @@ use crate::world::World;
 use gdnative::{
     godot_error, godot_print, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods,
 };
-use gdnative::{Camera2D, Instance, NativeClass, Node2D, NodePath, RigidBody2D, Vector2};
+use gdnative::{
+    Camera2D, Instance, NativeClass, Node2D, NodePath, RigidBody2D,
+    Vector2,
+};
 
 #[derive(NativeClass)]
 #[inherit(Node2D)]

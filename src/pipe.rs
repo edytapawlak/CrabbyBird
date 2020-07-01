@@ -15,10 +15,12 @@ impl Pipe {
     }
 
     #[export]
-    pub unsafe fn _ready(&mut self, owner: StaticBody2D) {
+    pub unsafe fn _ready(&mut self, mut owner: StaticBody2D) {
         self.notifier = owner
             .get_node(NodePath::from_str("./Notifier"))
             .and_then(|n| n.cast::<VisibilityNotifier2D>());
+        owner.set_collision_layer(2);
+        owner.set_collision_mask(0);
     }
 
     #[export]

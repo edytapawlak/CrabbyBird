@@ -31,6 +31,7 @@ animations = [ {
 
 [node name="Player" type="RigidBody2D"]
 gravity_scale = 10.0
+linear_damp = 0.0
 script = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -48,4 +49,5 @@ frame = 1
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 3 )
 animation = "jump"
+[connection signal="body_entered" from="." to="." method="_on_player_body_entered"]
 [connection signal="animation_finished" from="PuffAnimation" to="." method="_on_puff_animation_finished"]
