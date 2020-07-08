@@ -72,7 +72,9 @@ impl World {
         // Pipes management.
         if self.obstacle_status {
             self.pipe_manager
-                .map_mut_aliased(|manager, owner| manager.manage_pipes(owner, control_position))
+                .map_mut_aliased(|manager, owner| {
+                    manager.manage_pipes(owner, control_position, 112.0)
+                })
                 .expect("Can't call menager's function: `manage_pipes`");
         }
     }

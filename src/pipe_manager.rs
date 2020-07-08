@@ -21,11 +21,11 @@ impl PipeManager {
     pub fn _init(mut _owner: Node2D) -> Self {
         PipeManager {
             last_pipe_position: Vector2::new(0.0, 0.0), // Default value which means that
-                                                        // pipe generation hasn't started yet.
+            // pipe generation hasn't started yet.
             pipe_scene: None,
             maximal_sprite_height: 640.0,
             minimal_sprite_height: 50.0,
-            pipe_offset: 45.0,
+            pipe_offset: 70.0,
             pipe_density: 300.0,
         }
     }
@@ -47,7 +47,7 @@ impl PipeManager {
         };
     }
 
-    fn add_pipe(&mut self, mut owner: Node2D, pipe_density: f32, screen_bottom_margin: f32) {
+    fn add_pipe(&mut self, mut owner: Node2D, screen_bottom_margin: f32) {
         match &self.pipe_scene {
             Some(scene) => {
                 // Get pipe scene instance and cast it to StaticBody2D.
@@ -66,7 +66,7 @@ impl PipeManager {
 
                         // Choose random y position in given range.
                         let mut rng = thread_rng();
-                        self.last_pipe_position += Vector2::new(pipe_density, 0.0);
+                        self.last_pipe_position += Vector2::new(self.pipe_density, 0.0);
 
                         // Update last pipe of the manager
                         // Top and bottom margins are negative, so order is reverse.
@@ -86,9 +86,13 @@ impl PipeManager {
         }
     }
 
-    pub unsafe fn manage_pipes(&mut self, owner: Node2D, control_position: f32) {
+    pub unsafe fn manage_pipes(
+        &mut self,
+        owner: Node2D,
+        control_position: f32,
+        bottom_margin: f32,
+    ) {
         // Pipe management
-        // TODO Set bottom_margin more clever than 112.
 
         // Check if there are any pipes.
         // 0.0 is default x position which means there aren't any pipes yet.
@@ -96,7 +100,7 @@ impl PipeManager {
             self.last_pipe_position.x = control_position;
         }
         if (control_position - self.last_pipe_position.x) > self.pipe_density {
-            self.add_pipe(owner, self.pipe_density, 112.0);
+            self.add_pipe(owner, bottom_margin);
         }
     }
 }

@@ -48,7 +48,7 @@ impl Player {
 
         // We want to set collision with 1 and 2 mask layer. 2^1 + 2^2 = 6
         owner.set_collision_mask(6);
-      
+
         owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
         // Set jump animation
         self.jump_animation = owner
@@ -167,7 +167,7 @@ impl Player {
         // Hide jump smoke
         self.puff_animation.map(|mut anim| anim.hide());
     }
-    
+
     #[export]
     unsafe fn _on_player_body_entered(&mut self, mut owner: RigidBody2D, _node: Node) {
         self.state = PlayerState::Dead;

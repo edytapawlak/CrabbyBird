@@ -82,6 +82,7 @@ impl BaseManager {
                     unsafe {
                         ins.set_position(self.get_position_to_add(owner));
                         ins.set_collision_layer(4); // 2^2
+
                         // Add StaticBody2D to the game.
                         owner.add_child(Some(ins.to_node()), false);
                     }
