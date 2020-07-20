@@ -110,6 +110,8 @@ impl Player {
     unsafe fn dead(&self, mut owner: RigidBody2D) {
         owner.set_linear_velocity(Vector2::new(0.0, owner.get_linear_velocity().y));
         owner.set_collision_mask(4); // 2^2
+        self.jump_animation
+            .map(|mut anim| anim.play(GodotString::from_str("gameover"), false));
     }
 
     #[export]
@@ -173,7 +175,5 @@ impl Player {
         self.state = PlayerState::Dead;
         // Emit signal to Game.
         owner.emit_signal(GodotString::from_str("player_collision"), &[]);
-        self.jump_animation
-            .map(|mut anim| anim.play(GodotString::from_str("gameover"), false));
     }
 }

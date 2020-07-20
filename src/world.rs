@@ -25,7 +25,7 @@ impl World {
     }
 
     #[export]
-    fn notify(&mut self, mut _owner: Node2D) {
+    fn notify_control_start(&mut self, mut _owner: Node2D) {
         // Start obstales generation.
         self.obstacle_status = true;
     }

@@ -57,35 +57,33 @@ impl Game {
                     Instance::try_from_unsafe_base(w).expect("Failure to downcast Node2D to World");
                 // Connect signal to start generating pipes.
                 self.crabby
-                    .expect("There are no crabby.")
+                    .expect("There is no crabby.")
                     .connect(
                         GodotString::from_str("control_start"),
                         Some(w.to_object()),
-                        GodotString::from_str("notify"),
+                        GodotString::from_str("notify_control_start"),
                         VariantArray::new(),
-                        0,
+                        1,
                     )
-                    .unwrap();
-                // TODO Remove unwrap.
+                    .expect("Problem with connecting `control_start` signal");
             }
             None => godot_print!("Problem with loading World node."),
         }
         // Connect game over signal.
-        // TODO Remove unwrap.
         self.crabby
-            .expect("The're are no crabby.")
+            .expect("There is no crabby.")
             .connect(
                 GodotString::from_str("player_collision"),
                 Some(owner.to_object()),
-                GodotString::from_str("notify"),
+                GodotString::from_str("notify_collision"),
                 VariantArray::new(),
                 0,
             )
-            .unwrap();
+            .expect("Problem with connecting `player_collision` signal");
     }
 
     #[export]
-    fn notify(&mut self, mut _owner: gdnative::Node2D) {
+    fn notify_collision(&mut self, mut _owner: gdnative::Node2D) {
         godot_print!("Game Over!")
         // TODO game over.
     }
