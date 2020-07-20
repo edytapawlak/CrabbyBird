@@ -5,7 +5,7 @@ Project is under active development, more features soon.
 
 ## Demo
 
-![Ground generation](https://thumbs.gfycat.com/PleasedReadyAgouti-size_restricted.gif)
+![Ground generation](https://thumbs.gfycat.com/MeanImpoliteDogwoodtwigborer.webp)
 
 ## How to run
 
@@ -25,3 +25,7 @@ If you want to use this repo as tutorial, here's a list of development stages:
 4. [World generation part 1 – ground](https://github.com/edytapawlak/CrabbyBird/tree/431c842e4c7631473de94cf578f517b27f54b873)
 
 5. [World generation part 2 – pipes](https://github.com/edytapawlak/CrabbyBird/tree/66aa4f3d9d4613a0a215fbca8db21ada8d3dd775)
+
+6. [World structure separation](https://github.com/edytapawlak/CrabbyBird/tree/7924030e8ccf8ddeae7ea4982d43efead3529e31)
+
+7. [Game stages](https://github.com/edytapawlak/CrabbyBird/tree/3c3a7e6e5df226930802336a5b62442591291683)
