@@ -26,11 +26,6 @@ animations = [ {
 
 [sub_resource type="SpriteFrames" id=2]
 animations = [ {
-"frames": [ ExtResource( 9 ), ExtResource( 11 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 12 ) ],
-"loop": true,
-"name": "fly",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 14 ), ExtResource( 13 ), ExtResource( 15 ) ],
 "loop": false,
 "name": "gameover",
@@ -40,11 +35,15 @@ animations = [ {
 "loop": false,
 "name": "jump",
 "speed": 5.0
+}, {
+"frames": [ ExtResource( 9 ), ExtResource( 11 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 12 ) ],
+"loop": true,
+"name": "fly",
+"speed": 5.0
 } ]
 
 [node name="Player" type="RigidBody2D"]
 collision_mask = 0
-gravity_scale = 10.0
 linear_damp = 0.0
 script = ExtResource( 2 )
 

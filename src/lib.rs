@@ -4,6 +4,7 @@ use gdnative::{
 
 mod base_manager;
 mod game;
+mod game_state;
 mod pipe;
 mod pipe_manager;
 mod player;
@@ -17,6 +18,7 @@ fn init(handle: gdnative::init::InitHandle) {
     handle.add_class::<pipe_manager::PipeManager>();
     handle.add_class::<pipe::Pipe>();
     handle.add_class::<world::World>();
+    handle.add_class::<game_state::GameState>();
 }
 
 // macros that create the entry-points of the dynamic library.

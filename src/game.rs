@@ -3,8 +3,8 @@ use gdnative::{
     godot_error, godot_print, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods,
 };
 use gdnative::{
-    Camera2D, GodotString, Instance, NativeClass, Node2D, NodePath, RigidBody2D, VariantArray,
-    Vector2,
+    Camera2D, CanvasLayer, GodotString, Instance, NativeClass, Node2D, NodePath, RigidBody2D,
+    VariantArray, Vector2,
 };
 
 #[derive(NativeClass)]
@@ -15,6 +15,8 @@ pub struct Game {
     camera: Option<Camera2D>,
     // A reference to a GodotObject with a Rust NativeClass attached.
     world: Instance<World>,
+    score: u32,
+    game_state: Option<CanvasLayer>,
 }
 
 #[methods]
@@ -25,6 +27,8 @@ impl Game {
             crabby: None,
             camera: None,
             world: Instance::new(),
+            score: 0,
+            game_state: None,
         }
     }
 
@@ -46,9 +50,25 @@ impl Game {
         self.camera
             .map(|mut cam| cam.set_offset(Vector2::new(-0.25 * self.screen_size.x, 0.0)));
 
+        self.game_state = owner
+            .get_node(NodePath::from_str("./GameState"))
+            .and_then(|n| n.cast::<CanvasLayer>());
+
         let world = owner
             .get_node(NodePath::from_str("./World"))
             .and_then(|n| n.cast::<Node2D>());
+
+        // Connect pass_pipe signal.
+        self.crabby
+            .expect("There is no crabby.")
+            .connect(
+                GodotString::from_str("pass_pipe"),
+                Some(self.game_state.unwrap().to_object()),
+                GodotString::from_str("notify_pass_pipe"),
+                VariantArray::new(),
+                1,
+            )
+            .expect("Problem with connecting `pass_pipe` signal");
 
         match world {
             Some(w) => {
@@ -86,6 +106,12 @@ impl Game {
     fn notify_collision(&mut self, mut _owner: gdnative::Node2D) {
         godot_print!("Game Over!")
         // TODO game over.
+    }
+
+    #[export]
+    fn notify_pass_pipe(&mut self, mut _owner: gdnative::Node2D) {
+        godot_print!("PIPE PASSED!");
+        self.score += 1;
     }
 
     #[export]

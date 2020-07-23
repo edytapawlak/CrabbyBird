@@ -30,13 +30,13 @@ pub struct Player {
 impl Player {
     pub fn _init(mut _owner: RigidBody2D) -> Self {
         Player {
-            jump_speed: 500.0,
+            jump_speed: 400.0,
             x_speed: 100.0,
             max_facing_angle: -30.0,
             jump_animation: None,
             puff_animation: None,
             state: PlayerState::Flying,
-            default_gravity_scale: 10.0,
+            default_gravity_scale: 15.0,
         }
     }
 
@@ -69,6 +69,11 @@ impl Player {
 
         builder.add_signal(Signal {
             name: "player_collision",
+            args: &[],
+        });
+
+        builder.add_signal(Signal {
+            name: "pass_pipe",
             args: &[],
         });
     }
@@ -171,8 +176,11 @@ impl Player {
     }
 
     #[export]
-    unsafe fn _on_player_body_entered(&mut self, mut owner: RigidBody2D, _node: Node) {
+    unsafe fn _on_player_body_entered(&mut self, mut owner: RigidBody2D, node: Node) {
         self.state = PlayerState::Dead;
+
+        //godot_print!("{:?}", node);
+
         // Emit signal to Game.
         owner.emit_signal(GodotString::from_str("player_collision"), &[]);
     }

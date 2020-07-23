@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://scenes/Background.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/GameState.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/World.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=3]
 [ext_resource path="res://scenes/Game.gdns" type="Script" id=6]
@@ -8,11 +8,12 @@
 [node name="Game" type="Node2D"]
 script = ExtResource( 6 )
 
-[node name="Background" parent="." instance=ExtResource( 1 )]
-
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
 current = true
+
+[node name="GameState" parent="." instance=ExtResource( 1 )]
+layer = 1
 
 [node name="World" parent="." instance=ExtResource( 2 )]
 
