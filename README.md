@@ -30,4 +30,4 @@ If you want to use this repo as tutorial, here's a list of development stages:
 
 7. [Game stages](https://github.com/edytapawlak/CrabbyBird/tree/3390de5f312d957e06a5f3be044bffd1993f92ec)
 
-8. [Scores](https://github.com/edytapawlak/CrabbyBird/tree/582c87d37fa52f4a4426cbb35d64fd26697f5d47)
+8. [Scores](https://github.com/edytapawlak/CrabbyBird/tree/c3d88b77ec98a87facea1ecc6ca7185a5d13058b)
