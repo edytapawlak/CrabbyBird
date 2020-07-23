@@ -58,7 +58,7 @@ impl Game {
         // If crabby is not None
         if let Some(mut crabby) = self.crabby {
             // If game state is not None
-            if let Some(game_stat) = self.game_state {
+            if let Some(mut game_stat) = self.game_state {
                 // Connect pass_pipe signal.
                 crabby
                     .connect(
@@ -69,6 +69,28 @@ impl Game {
                         1,
                     )
                     .expect("Problem with connecting `pass_pipe` signal");
+
+                // Connect game over signal.
+                crabby
+                    .connect(
+                        GodotString::from_str("player_collision"),
+                        Some(game_stat.to_object()),
+                        GodotString::from_str("game_over"),
+                        VariantArray::new(),
+                        0,
+                    )
+                    .expect("Problem with connecting `player_collision` signal");
+
+                 // Connect new game signal.
+                 game_stat
+                  .connect(
+                      GodotString::from_str("new_game_pressed"),
+                      Some(owner.to_object()),
+                      GodotString::from_str("new_game"),
+                      VariantArray::new(),
+                      0,
+                    )
+                  .expect("Problem with connecting `new_game_pressed` signal");
             } else {
                 godot_print!("Problem with loading GameState node");
             }
@@ -92,26 +114,9 @@ impl Game {
                 }
                 None => godot_print!("Problem with loading World node."),
             }
-
-            // Connect game over signal.
-            crabby
-                .connect(
-                    GodotString::from_str("player_collision"),
-                    Some(owner.to_object()),
-                    GodotString::from_str("notify_collision"),
-                    VariantArray::new(),
-                    0,
-                )
-                .expect("Problem with connecting `player_collision` signal");
         } else {
             godot_print!("Problem with loading Player node");
         }
-    }
-
-    #[export]
-    fn notify_collision(&mut self, mut _owner: gdnative::Node2D) {
-        godot_print!("Game Over!")
-        // TODO game over.
     }
 
     #[export]
@@ -143,5 +148,10 @@ impl Game {
                 manager.manage_world(control_position, camera_x_range)
             })
             .expect("Can't call function: `manage_world`");
+    }
+
+    #[export]
+    fn new_game(&mut self, mut _owner: Node2D) {
+        godot_print!("New Game!");
     }
 }
