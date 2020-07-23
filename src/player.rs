@@ -1,8 +1,6 @@
 use gdnative::init::{ClassBuilder, Signal};
 use gdnative::NativeClass;
-use gdnative::{
-    godot_error, godot_print, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods,
-};
+use gdnative::{godot_error, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods};
 use gdnative::{AnimatedSprite, GodotString, InputEvent, Node, NodePath, RigidBody2D, Vector2};
 use std::f64::consts::PI;
 
@@ -176,12 +174,8 @@ impl Player {
     }
 
     #[export]
-    unsafe fn _on_player_body_entered(&mut self, mut owner: RigidBody2D, node: Node) {
+    unsafe fn _on_player_body_entered(&mut self, mut owner: RigidBody2D, _node: Node) {
         self.state = PlayerState::Dead;
-
-        //godot_print!("{:?}", node);
-
-        // Emit signal to Game.
         owner.emit_signal(GodotString::from_str("player_collision"), &[]);
     }
 }

@@ -15,7 +15,6 @@ pub struct Game {
     camera: Option<Camera2D>,
     // A reference to a GodotObject with a Rust NativeClass attached.
     world: Instance<World>,
-    score: u32,
     game_state: Option<CanvasLayer>,
 }
 
@@ -27,7 +26,6 @@ impl Game {
             crabby: None,
             camera: None,
             world: Instance::new(),
-            score: 0,
             game_state: None,
         }
     }
@@ -57,61 +55,63 @@ impl Game {
         let world = owner
             .get_node(NodePath::from_str("./World"))
             .and_then(|n| n.cast::<Node2D>());
-
-        // Connect pass_pipe signal.
-        self.crabby
-            .expect("There is no crabby.")
-            .connect(
-                GodotString::from_str("pass_pipe"),
-                Some(self.game_state.unwrap().to_object()),
-                GodotString::from_str("notify_pass_pipe"),
-                VariantArray::new(),
-                1,
-            )
-            .expect("Problem with connecting `pass_pipe` signal");
-
-        match world {
-            Some(w) => {
-                // Downcast a Godot base class to a NativeScript instance -- Instance<BaseManager>.
-                self.world =
-                    Instance::try_from_unsafe_base(w).expect("Failure to downcast Node2D to World");
-                // Connect signal to start generating pipes.
-                self.crabby
-                    .expect("There is no crabby.")
+        // If crabby is not None
+        if let Some(mut crabby) = self.crabby {
+            // If game state is not None
+            if let Some(game_stat) = self.game_state {
+                // Connect pass_pipe signal.
+                crabby
                     .connect(
-                        GodotString::from_str("control_start"),
-                        Some(w.to_object()),
-                        GodotString::from_str("notify_control_start"),
+                        GodotString::from_str("pass_pipe"),
+                        Some(game_stat.to_object()),
+                        GodotString::from_str("notify_pass_pipe"),
                         VariantArray::new(),
                         1,
                     )
-                    .expect("Problem with connecting `control_start` signal");
+                    .expect("Problem with connecting `pass_pipe` signal");
+            } else {
+                godot_print!("Problem with loading GameState node");
             }
-            None => godot_print!("Problem with loading World node."),
+
+            // If world is not None
+            match world {
+                Some(w) => {
+                    // Downcast a Godot base class to a NativeScript instance -- Instance<BaseManager>.
+                    self.world = Instance::try_from_unsafe_base(w)
+                        .expect("Failure to downcast Node2D to World");
+                    // Connect signal to start generating pipes.
+                    crabby
+                        .connect(
+                            GodotString::from_str("control_start"),
+                            Some(w.to_object()),
+                            GodotString::from_str("notify_control_start"),
+                            VariantArray::new(),
+                            1,
+                        )
+                        .expect("Problem with connecting `control_start` signal");
+                }
+                None => godot_print!("Problem with loading World node."),
+            }
+
+            // Connect game over signal.
+            crabby
+                .connect(
+                    GodotString::from_str("player_collision"),
+                    Some(owner.to_object()),
+                    GodotString::from_str("notify_collision"),
+                    VariantArray::new(),
+                    0,
+                )
+                .expect("Problem with connecting `player_collision` signal");
+        } else {
+            godot_print!("Problem with loading Player node");
         }
-        // Connect game over signal.
-        self.crabby
-            .expect("There is no crabby.")
-            .connect(
-                GodotString::from_str("player_collision"),
-                Some(owner.to_object()),
-                GodotString::from_str("notify_collision"),
-                VariantArray::new(),
-                0,
-            )
-            .expect("Problem with connecting `player_collision` signal");
     }
 
     #[export]
     fn notify_collision(&mut self, mut _owner: gdnative::Node2D) {
         godot_print!("Game Over!")
         // TODO game over.
-    }
-
-    #[export]
-    fn notify_pass_pipe(&mut self, mut _owner: gdnative::Node2D) {
-        godot_print!("PIPE PASSED!");
-        self.score += 1;
     }
 
     #[export]

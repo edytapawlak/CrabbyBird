@@ -1,6 +1,4 @@
-use gdnative::{
-    godot_error, godot_print, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods,
-};
+use gdnative::{godot_error, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods};
 use gdnative::{CanvasLayer, GodotString, Label, NativeClass, NodePath};
 
 #[derive(NativeClass)]
@@ -28,12 +26,12 @@ impl GameState {
 
     #[export]
     fn notify_pass_pipe(&mut self, mut _owner: gdnative::CanvasLayer) {
-        godot_print!("PIPE PASSED!");
+        // Pipe passed
         self.score += 1;
-        unsafe {
-            self.score_label
-                .unwrap()
-                .set_text(GodotString::from_str(format!("{:?}", self.score)));
+        if let Some(mut score_lbl) = self.score_label {
+            unsafe {
+                score_lbl.set_text(GodotString::from_str(self.score.to_string()));
+            }
         }
     }
 }
