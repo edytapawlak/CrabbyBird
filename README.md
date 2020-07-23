@@ -5,7 +5,7 @@ Project is under active development, more features soon.
 
 ## Demo
 
-![Ground generation](https://thumbs.gfycat.com/MeanImpoliteDogwoodtwigborer.webp)
+![CrabbyBird demo](https://thumbs.gfycat.com/SplendidScholarlyBlacknorwegianelkhound-size_restricted.gif)
 
 ## How to run
 
@@ -28,4 +28,6 @@ If you want to use this repo as tutorial, here's a list of development stages:
 
 6. [World structure separation](https://github.com/edytapawlak/CrabbyBird/tree/7924030e8ccf8ddeae7ea4982d43efead3529e31)
 
-7. [Game stages](https://github.com/edytapawlak/CrabbyBird/tree/3c3a7e6e5df226930802336a5b62442591291683)
+7. [Game stages](https://github.com/edytapawlak/CrabbyBird/tree/3390de5f312d957e06a5f3be044bffd1993f92ec)
+
+8. [Scores](https://github.com/edytapawlak/CrabbyBird/tree/582c87d37fa52f4a4426cbb35d64fd26697f5d47)
