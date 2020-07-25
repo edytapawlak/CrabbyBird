@@ -77,6 +77,11 @@ impl Player {
             name: "pass_pipe",
             args: &[],
         });
+
+        builder.add_signal(Signal {
+          name: "space_new_game",
+          args: &[],
+      });
     }
 
     #[export]
@@ -135,7 +140,9 @@ impl Player {
                     self.flap(owner);
                 }
                 PlayerState::Flapping => self.flap(owner),
-                PlayerState::Dead => {}
+                PlayerState::Dead => {
+                  owner.emit_signal(GodotString::from_str("space_new_game"), &[]);
+                }
             }
         }
     }

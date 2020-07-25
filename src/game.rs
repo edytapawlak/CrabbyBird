@@ -76,6 +76,18 @@ impl Game {
                     1,
                 )
                 .expect("Problem with connecting `new_game` signal to world");
+
+            // Connect `space_new_game` signal from Player struct.
+            crabby
+                .connect(
+                    GodotString::from_str("space_new_game"),
+                    Some(owner.to_object()),
+                    GodotString::from_str("new_game"),
+                    VariantArray::new(),
+                    1,
+                )
+                .expect("Problem with connecting `spacenew_game` signal to game");
+
             // If game state is not None
             if let Some(mut game_stat) = self.game_state {
                 // Connect pass_pipe signal.
