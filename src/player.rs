@@ -42,12 +42,15 @@ impl Player {
     unsafe fn _ready(&mut self, mut owner: RigidBody2D) {
         // Set player in the center of the screen
         let size = owner.get_viewport_rect().size;
+        owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
+
         owner.set_collision_layer(1); // 2^0
 
         // We want to set collision with 1 and 2 mask layer. 2^1 + 2^2 = 6
+        // 1 for collisions with pieps,
+        // 2 for collisions with base.
         owner.set_collision_mask(6);
 
-        owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
         // Set jump animation
         self.jump_animation = owner
             .get_node(NodePath::from_str("./AnimatedSprite"))
@@ -112,7 +115,7 @@ impl Player {
 
     unsafe fn dead(&self, mut owner: RigidBody2D) {
         owner.set_linear_velocity(Vector2::new(0.0, owner.get_linear_velocity().y));
-        owner.set_collision_mask(4); // 2^2
+        owner.set_collision_mask(4); // 2^2, 2 for collision with base
         self.jump_animation
             .map(|mut anim| anim.play(GodotString::from_str("gameover"), false));
     }
@@ -177,5 +180,19 @@ impl Player {
     unsafe fn _on_player_body_entered(&mut self, mut owner: RigidBody2D, _node: Node) {
         self.state = PlayerState::Dead;
         owner.emit_signal(GodotString::from_str("player_collision"), &[]);
+    }
+
+    #[export]
+    fn handle_new_game(&mut self, mut owner: RigidBody2D) {
+        self.state = PlayerState::Flying;
+        unsafe {
+            // Activate collisions with pipes.
+            owner.set_collision_mask(6);
+            // Set player to the center of game screen.
+            let size = owner.get_viewport_rect().size;
+            owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
+            // Set player rotation degree.
+            owner.set_rotation_degrees(0.);
+        }
     }
 }

@@ -1,4 +1,5 @@
 use crate::world::World;
+use gdnative::init::{ClassBuilder, Signal};
 use gdnative::{
     godot_error, godot_print, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods,
 };
@@ -9,6 +10,7 @@ use gdnative::{
 
 #[derive(NativeClass)]
 #[inherit(Node2D)]
+#[register_with(Self::register_signals)]
 pub struct Game {
     screen_size: Vector2,
     crabby: Option<RigidBody2D>,
@@ -30,8 +32,15 @@ impl Game {
         }
     }
 
+    fn register_signals(builder: &ClassBuilder<Self>) {
+        builder.add_signal(Signal {
+            name: "new_game",
+            args: &[],
+        });
+    }
+
     #[export]
-    unsafe fn _ready(&mut self, owner: Node2D) {
+    unsafe fn _ready(&mut self, mut owner: Node2D) {
         self.screen_size = owner
             .get_viewport()
             .expect("Can't get screen size.")
@@ -57,6 +66,16 @@ impl Game {
             .and_then(|n| n.cast::<Node2D>());
         // If crabby is not None
         if let Some(mut crabby) = self.crabby {
+            // Connect `new_game` signal to crabby.
+            owner
+                .connect(
+                    GodotString::from_str("new_game"),
+                    Some(crabby.to_object()),
+                    GodotString::from_str("handle_new_game"),
+                    VariantArray::new(),
+                    1,
+                )
+                .expect("Problem with connecting `new_game` signal to world");
             // If game state is not None
             if let Some(mut game_stat) = self.game_state {
                 // Connect pass_pipe signal.
@@ -81,16 +100,27 @@ impl Game {
                     )
                     .expect("Problem with connecting `player_collision` signal");
 
-                 // Connect new game signal.
-                 game_stat
-                  .connect(
-                      GodotString::from_str("new_game_pressed"),
-                      Some(owner.to_object()),
-                      GodotString::from_str("new_game"),
-                      VariantArray::new(),
-                      0,
+                // Connect `new_game_pressed` signal to `new_game` function.
+                game_stat
+                    .connect(
+                        GodotString::from_str("new_game_pressed"),
+                        Some(owner.to_object()),
+                        GodotString::from_str("new_game"),
+                        VariantArray::new(),
+                        0,
                     )
-                  .expect("Problem with connecting `new_game_pressed` signal");
+                    .expect("Problem with connecting `new_game_pressed` signal");
+
+                // Connect `new_game` signal to `game_state`.
+                owner
+                    .connect(
+                        GodotString::from_str("new_game"),
+                        Some(game_stat.to_object()),
+                        GodotString::from_str("handle_new_game"),
+                        VariantArray::new(),
+                        1,
+                    )
+                    .expect("Problem with connecting `new_game` signal to world");
             } else {
                 godot_print!("Problem with loading GameState node");
             }
@@ -111,6 +141,17 @@ impl Game {
                             1,
                         )
                         .expect("Problem with connecting `control_start` signal");
+
+                    // Connect `new_game` signal to world.
+                    owner
+                        .connect(
+                            GodotString::from_str("new_game"),
+                            Some(w.to_object()),
+                            GodotString::from_str("handle_new_game"),
+                            VariantArray::new(),
+                            1,
+                        )
+                        .expect("Problem with connecting `new_game` signal to world");
                 }
                 None => godot_print!("Problem with loading World node."),
             }
@@ -151,7 +192,9 @@ impl Game {
     }
 
     #[export]
-    fn new_game(&mut self, mut _owner: Node2D) {
-        godot_print!("New Game!");
+    fn new_game(&mut self, mut owner: Node2D) {
+        unsafe {
+            owner.emit_signal(GodotString::from_str("new_game"), &[]);
+        }
     }
 }

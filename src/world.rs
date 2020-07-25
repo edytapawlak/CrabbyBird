@@ -78,4 +78,19 @@ impl World {
                 .expect("Can't call menager's function: `manage_pipes`");
         }
     }
+
+    #[export]
+    fn handle_new_game(&mut self, _owner: Node2D) {
+        // Disable pipe generation until player take controll.
+        self.obstacle_status = false;
+        // Remove old world elements.
+        unsafe {
+            self.pipe_manager
+                .map_mut_aliased(|manager, owner| manager.remove_all_pipes(owner))
+                .expect("Can't call menager's function: `remove_all_pipes`");
+            self.base_manager
+                .map_mut_aliased(|manager, owner| manager.remove_all_bases(owner))
+                .expect("Can't call menager's function: `remove_all_bases`");
+        }
+    }
 }

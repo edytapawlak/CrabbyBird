@@ -120,4 +120,9 @@ impl BaseManager {
             self.remove_base(owner);
         }
     }
+
+    pub fn remove_all_bases(&mut self, _owner: Node2D) {
+        // Forget all base tiles.
+        self.current_tiles = VecDeque::new();
+    }
 }

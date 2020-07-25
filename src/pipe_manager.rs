@@ -2,7 +2,7 @@ use gdnative::NativeClass;
 use gdnative::{
     godot_error, godot_print, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods,
 };
-use gdnative::{GodotString, Node2D, PackedScene, ResourceLoader, StaticBody2D, Vector2};
+use gdnative::{GodotString, Node, Node2D, PackedScene, ResourceLoader, StaticBody2D, Vector2};
 use rand::{thread_rng, Rng};
 
 #[derive(Debug, NativeClass)]
@@ -102,5 +102,17 @@ impl PipeManager {
         if (control_position - self.last_pipe_position.x) > self.pipe_density {
             self.add_pipe(owner, bottom_margin);
         }
+    }
+
+    pub fn remove_all_pipes(&mut self, owner: Node2D) {
+        // Remove old pipes.
+        unsafe {
+            for pipe in owner.get_children().iter() {
+                pipe.try_to_object::<Node>()
+                    .and_then(|mut n| Some(n.queue_free()));
+            }
+        }
+        self.last_pipe_position = Vector2::new(0.0, 0.0); // Default value which means that
+                                                          // pipe generation hasn't started yet.
     }
 }

@@ -1,9 +1,9 @@
+use gdnative::init::{ClassBuilder, Signal};
 use gdnative::{
     godot_error, godot_print, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods,
 };
-use gdnative::{CanvasLayer, GodotString, Label, NativeClass, Node2D, NodePath, Vector2, };
+use gdnative::{CanvasLayer, GodotString, Label, NativeClass, Node2D, NodePath, Vector2};
 use std::cmp;
-use gdnative::init::{ClassBuilder, Signal};
 
 #[derive(NativeClass)]
 #[inherit(CanvasLayer)]
@@ -49,20 +49,20 @@ impl GameState {
             game_over_node.set_visible(false);
 
             let screen_size = owner
-              .get_viewport()
-              .expect("Can't get screen size.")
-              .get_size();
-            game_over_node.set_position(Vector2::new(screen_size.x/2., screen_size.y/3.));
+                .get_viewport()
+                .expect("Can't get screen size.")
+                .get_size();
+            game_over_node.set_position(Vector2::new(screen_size.x / 2., screen_size.y / 4.));
         } else {
             godot_print!("There is no game_over_node.");
         }
     }
 
     fn register_signals(builder: &ClassBuilder<Self>) {
-      builder.add_signal(Signal {
-          name: "new_game_pressed",
-          args: &[],
-      });
+        builder.add_signal(Signal {
+            name: "new_game_pressed",
+            args: &[],
+        });
     }
 
     #[export]
@@ -78,10 +78,9 @@ impl GameState {
 
     #[export]
     fn game_over(&mut self, mut _owner: gdnative::CanvasLayer) {
-        godot_print!("Game Over!");
         // Update best score.
         self.best_score = cmp::max(self.score, self.best_score);
-
+        // Update text of labels and their visibility.
         unsafe {
             self.best_score_label.and_then(|mut label| {
                 Some(label.set_text(GodotString::from_str(self.best_score.to_string())))
@@ -97,9 +96,21 @@ impl GameState {
     }
 
     #[export]
-    unsafe fn _on_new_game_button_pressed(&mut self, mut owner: gdnative::CanvasLayer) {
-      self.score = 0;
-      owner.emit_signal(GodotString::from_str("new_game_pressed"), &[]);
+    unsafe fn _on_new_game_button_pressed(&mut self, mut owner: CanvasLayer) {
+        owner.emit_signal(GodotString::from_str("new_game_pressed"), &[]);
     }
-    
+
+    #[export]
+    fn handle_new_game(&mut self, _owner: CanvasLayer) {
+        self.score = 0;
+        unsafe {
+            self.score_label.and_then(|mut label| {
+                Some(label.set_text(GodotString::from_str(self.score.to_string())))
+            });
+            self.game_over_node
+                .and_then(|mut game_over_n| Some(game_over_n.set_visible(false)));
+            self.score_label
+                .and_then(|mut score_lab| Some(score_lab.set_visible(true)));
+        }
+    }
 }
