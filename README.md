@@ -5,7 +5,7 @@ Project is under active development, more features soon.
 
 ## Demo
 
-![CrabbyBird demo](https://thumbs.gfycat.com/SplendidScholarlyBlacknorwegianelkhound-size_restricted.gif)
+![CrabbyBird demo](https://thumbs.gfycat.com/ShortPhonyFairybluebird-size_restricted.gif)
 
 ## How to run
 
@@ -31,3 +31,5 @@ If you want to use this repo as tutorial, here's a list of development stages:
 7. [Game stages](https://github.com/edytapawlak/CrabbyBird/tree/3390de5f312d957e06a5f3be044bffd1993f92ec)
 
 8. [Scores](https://github.com/edytapawlak/CrabbyBird/tree/c3d88b77ec98a87facea1ecc6ca7185a5d13058b)
+
+9. [Game Over screen](https://github.com/edytapawlak/CrabbyBird/tree/e4a0b24de75f89ec3d2a1815ed1aceaa6beeb84a)
