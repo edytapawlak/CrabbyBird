@@ -5,7 +5,7 @@ Project is under active development, more features soon.
 
 ## Demo
 
-![CrabbyBird demo](https://thumbs.gfycat.com/ShortPhonyFairybluebird-size_restricted.gif)
+![CrabbyBird demo](https://thumbs.gfycat.com/ForkedBronzeAmurminnow-size_restricted.gif)
 
 ## How to run
 
