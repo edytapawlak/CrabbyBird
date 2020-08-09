@@ -33,3 +33,5 @@ If you want to use this repo as tutorial, here's a list of development stages:
 8. [Scores](https://github.com/edytapawlak/CrabbyBird/tree/c3d88b77ec98a87facea1ecc6ca7185a5d13058b)
 
 9. [Game Over screen](https://github.com/edytapawlak/CrabbyBird/tree/8c5fabf65dfa33cfb6804b734d2ccc6d4f4e2807)
+
+10. [Particle jump effect](https://github.com/edytapawlak/CrabbyBird/tree/a732f7412bb0bdaf151f71a006a7b1f07e737608)
