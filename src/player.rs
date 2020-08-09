@@ -1,7 +1,7 @@
 use gdnative::init::{ClassBuilder, Signal};
 use gdnative::NativeClass;
 use gdnative::{godot_error, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods};
-use gdnative::{AnimatedSprite, GodotString, InputEvent, Node, NodePath, RigidBody2D, Vector2};
+use gdnative::{AnimatedSprite, GodotString, InputEvent, Node, NodePath, RigidBody2D, Vector2, CPUParticles2D};
 use std::f64::consts::PI;
 
 pub enum PlayerState {
@@ -20,6 +20,7 @@ pub struct Player {
     max_facing_angle: f32, // Maximal facing angle in degrees.
     jump_animation: Option<AnimatedSprite>,
     puff_animation: Option<AnimatedSprite>,
+    puf_particles: Option<CPUParticles2D>,
     state: PlayerState,
     default_gravity_scale: f64,
 }
@@ -33,6 +34,7 @@ impl Player {
             max_facing_angle: -30.0,
             jump_animation: None,
             puff_animation: None,
+            puf_particles: None,
             state: PlayerState::Flying,
             default_gravity_scale: 15.0,
         }
@@ -59,6 +61,11 @@ impl Player {
         self.puff_animation = owner
             .get_node(NodePath::from_str("./PuffAnimation"))
             .and_then(|node| node.cast::<AnimatedSprite>());
+
+        self.puf_particles = owner
+            .get_node(NodePath::from_str("./PuffParticles"))
+            .and_then(|node| node.cast::<CPUParticles2D>());
+
         owner.set_linear_velocity(Vector2::new(self.x_speed, owner.get_linear_velocity().y));
     }
 
@@ -99,9 +106,12 @@ impl Player {
             .map(|mut anim| anim.play(GodotString::from_str("jump"), true));
 
         // Play and show jump smoke.
-        self.puff_animation
-            .map(|mut anim| anim.play(GodotString::from_str("default"), true));
-        self.puff_animation.map(|mut anim| anim.show());
+        //self.puff_animation
+        //    .map(|mut anim| anim.play(GodotString::from_str("default"), true));
+        //self.puff_animation.map(|mut anim| anim.show());
+
+        self.puf_particles
+          .map(|mut puff| puff.restart());
     }
 
     unsafe fn fly(&self, mut owner: RigidBody2D, delta: f32) {
@@ -200,6 +210,7 @@ impl Player {
             owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
             // Set player rotation degree.
             owner.set_rotation_degrees(0.);
+            owner.set_angular_velocity(0.);
         }
     }
 }
