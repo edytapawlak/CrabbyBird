@@ -1,4 +1,5 @@
-use gdnative::*;
+use gdnative::prelude::*;
+use gdnative::api::*;
 use std::f64::consts::PI;
 
 #[derive(NativeClass)]
@@ -10,7 +11,7 @@ pub struct Player {
 
 #[methods]
 impl Player {
-    pub fn _init(mut _owner: RigidBody2D) -> Self {
+    pub fn new(mut _owner: &RigidBody2D) -> Self {
         Player {
             jump_speed: 500.0,
             facing_angle: -30.0,
@@ -18,17 +19,17 @@ impl Player {
     }
 
     #[export]
-    unsafe fn _ready(&mut self, mut owner: RigidBody2D) {
+    unsafe fn _ready(&mut self, owner: &RigidBody2D) {
         // Setting player in the center of the screen
         let size = owner.get_viewport_rect().size;
         owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
     }
 
     #[export]
-    unsafe fn flap(&mut self, mut owner: RigidBody2D) {
+    unsafe fn flap(&mut self, owner: &RigidBody2D) {
         // Change player velocity y component to make him jump.
         owner.set_linear_velocity(Vector2::new(
-            owner.get_linear_velocity().x,
+            owner.linear_velocity().x,
             -self.jump_speed,
         ));
         // Rotate player anti-clockwise when jumping.
@@ -36,20 +37,17 @@ impl Player {
     }
 
     #[export]
-    unsafe fn _input(&mut self, owner: RigidBody2D, event: Option<InputEvent>) {
+    unsafe fn _physics_process(&mut self, owner: &RigidBody2D, _delta: f64) {
+
+        // Input
         // Flap if space is pressed
-        if event
-            .unwrap()
-            .is_action_pressed(GodotString::from_str("ui_select"), false)
-        {
+        let input = Input::godot_singleton();
+        if Input::is_action_pressed(&input, "ui_select") {
             self.flap(owner);
         }
-    }
 
-    #[export]
-    unsafe fn _physics_process(&mut self, mut owner: RigidBody2D, _delta: f64) {
         // Asure that player can't face up more than max facing_angle
-        let actual_rotation = owner.get_rotation_degrees();
+        let actual_rotation = owner.rotation_degrees();
         let max_facing_angle = self.facing_angle as f64;
 
         if actual_rotation < max_facing_angle {
@@ -57,7 +55,7 @@ impl Player {
             owner.set_angular_velocity(0.0);
         }
         // Set angular velocity when falling.
-        if owner.get_linear_velocity().y > 0.0 {
+        if owner.linear_velocity().y > 0.0 {
             owner.set_angular_velocity(PI / 2.0);
         }
     }
