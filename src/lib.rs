@@ -1,9 +1,9 @@
-use gdnative::*;
+use gdnative::prelude::{godot_init, InitHandle};
 
 mod player;
 
 // Function that registers all exposed classes to Godot
-fn init(handle: gdnative::prelude::InitHandle) {
+fn init(handle: InitHandle) {
     handle.add_class::<player::Player>();
 }
 

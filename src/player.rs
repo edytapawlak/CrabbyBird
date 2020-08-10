@@ -1,12 +1,12 @@
-use gdnative::prelude::*;
-use gdnative::api::*;
+use gdnative::api::{Input, RigidBody2D};
+use gdnative::prelude::{methods, NativeClass, Vector2};
 use std::f64::consts::PI;
 
 #[derive(NativeClass)]
 #[inherit(RigidBody2D)]
 pub struct Player {
     jump_speed: f32,
-    facing_angle: f32, // Maximal angle bird can faces up, in degrees.
+    max_facing_angle: f64, // Maximal angle bird can faces up, in degrees.
 }
 
 #[methods]
@@ -14,7 +14,7 @@ impl Player {
     pub fn new(mut _owner: &RigidBody2D) -> Self {
         Player {
             jump_speed: 500.0,
-            facing_angle: -30.0,
+            max_facing_angle: -30.0,
         }
     }
 
@@ -25,20 +25,15 @@ impl Player {
         owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
     }
 
-    #[export]
     unsafe fn flap(&mut self, owner: &RigidBody2D) {
         // Change player velocity y component to make him jump.
-        owner.set_linear_velocity(Vector2::new(
-            owner.linear_velocity().x,
-            -self.jump_speed,
-        ));
+        owner.set_linear_velocity(Vector2::new(owner.linear_velocity().x, -self.jump_speed));
         // Rotate player anti-clockwise when jumping.
         owner.set_angular_velocity(-PI);
     }
 
     #[export]
     unsafe fn _physics_process(&mut self, owner: &RigidBody2D, _delta: f64) {
-
         // Input
         // Flap if space is pressed
         let input = Input::godot_singleton();
@@ -48,10 +43,9 @@ impl Player {
 
         // Asure that player can't face up more than max facing_angle
         let actual_rotation = owner.rotation_degrees();
-        let max_facing_angle = self.facing_angle as f64;
 
-        if actual_rotation < max_facing_angle {
-            owner.set_rotation_degrees(max_facing_angle);
+        if actual_rotation < self.max_facing_angle {
+            owner.set_rotation_degrees(self.max_facing_angle);
             owner.set_angular_velocity(0.0);
         }
         // Set angular velocity when falling.
