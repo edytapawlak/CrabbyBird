@@ -2,3 +2,4 @@
 Cargo.lock
 .vscode/
 .import/
+assets/*.import
