@@ -1,5 +1,7 @@
 [gd_resource type="GDNativeLibrary" format=2]
 
 [resource]
+entry/Windows.64 = "res://target/debug/crabby_bird.dll"
 entry/X11.64 = "res://target/debug/libcrabby_bird.so"
+dependency/Windows.64 = [  ]
 dependency/X11.64 = [  ]
