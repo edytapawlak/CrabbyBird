@@ -1,16 +1,31 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=12 format=2]
 
-[ext_resource path="res://assets/icon.png" type="Texture" id=1]
+[ext_resource path="res://assets/crabby/crabby_mid.png" type="Texture" id=1]
 [ext_resource path="res://scenes/Player.gdns" type="Script" id=2]
+[ext_resource path="res://assets/crabby/crabby_down.png" type="Texture" id=3]
+[ext_resource path="res://assets/crabby/crabby_up.png" type="Texture" id=4]
+[ext_resource path="res://assets/puff/puff1.png" type="Texture" id=5]
+[ext_resource path="res://assets/puff/puff3.png" type="Texture" id=6]
+[ext_resource path="res://assets/puff/puff4.png" type="Texture" id=7]
+[ext_resource path="res://assets/puff/puff2.png" type="Texture" id=8]
 
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 30, 29.568 )
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 21.432
+height = 55.136
 
 [sub_resource type="SpriteFrames" id=2]
 animations = [ {
-"frames": [ ExtResource( 1 ) ],
-"loop": true,
+"frames": [ ExtResource( 5 ), ExtResource( 8 ), ExtResource( 6 ), ExtResource( 7 ) ],
+"loop": false,
 "name": "default",
+"speed": 25.0
+} ]
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ ExtResource( 4 ), ExtResource( 1 ), ExtResource( 3 ) ],
+"loop": false,
+"name": "jump",
 "speed": 5.0
 } ]
 
@@ -19,7 +34,18 @@ gravity_scale = 10.0
 script = ExtResource( 2 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
 shape = SubResource( 1 )
 
-[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+[node name="PuffAnimation" type="AnimatedSprite" parent="."]
+visible = false
+modulate = Color( 0.921569, 0.917647, 0.54902, 0.517647 )
+position = Vector2( -1, 48.5 )
+scale = Vector2( 1, 1.5 )
 frames = SubResource( 2 )
+frame = 1
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 3 )
+animation = "jump"
+[connection signal="animation_finished" from="PuffAnimation" to="." method="_on_puff_animation_finished"]
