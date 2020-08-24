@@ -20,13 +20,13 @@ impl Player {
 
     #[export]
 
-    unsafe fn _ready(&mut self, owner: &RigidBody2D) {
+    fn _ready(&mut self, owner: &RigidBody2D) {
         // Set player in the center of the screen
         let size = owner.get_viewport_rect().size;
         owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
     }
 
-    unsafe fn flap(&mut self, owner: &RigidBody2D) {
+    fn flap(&mut self, owner: &RigidBody2D) {
         // Change player velocity y component to make him jump.
         owner.set_linear_velocity(Vector2::new(owner.linear_velocity().x, -self.jump_speed));
         // Rotate player anti-clockwise when jumping.
@@ -35,13 +35,13 @@ impl Player {
         // Start flying animation.
         owner
             .get_node("./AnimatedSprite")
-            .and_then(|node| node.assume_safe().cast::<AnimatedSprite>())
+            .and_then(|node| unsafe { node.assume_safe().cast::<AnimatedSprite>() })
             .map(|anim| anim.play("jump", true));
 
         // Play and show jump smoke.
         owner
             .get_node("./PuffAnimation")
-            .and_then(|node| node.assume_safe().cast::<AnimatedSprite>())
+            .and_then(|node| unsafe { node.assume_safe().cast::<AnimatedSprite>() })
             .map(|anim| {
                 anim.play("default", true);
                 anim.show()
@@ -72,11 +72,11 @@ impl Player {
 
     // Function connected with animation_finished() event in PuffAnimation child.
     #[export]
-    unsafe fn _on_puff_animation_finished(&self, owner: &RigidBody2D) {
+    fn _on_puff_animation_finished(&self, owner: &RigidBody2D) {
         // Hide jump smoke
         owner
             .get_node("./PuffAnimation")
-            .and_then(|node| node.assume_safe().cast::<AnimatedSprite>())
+            .and_then(|node| unsafe { node.assume_safe().cast::<AnimatedSprite>() })
             .map(|anim| anim.hide());
     }
 }
