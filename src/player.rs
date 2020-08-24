@@ -1,5 +1,5 @@
-use gdnative::api::{AnimatedSprite, Input, RigidBody2D};
-use gdnative::prelude::{methods, NativeClass, Vector2};
+use gdnative::api::{AnimatedSprite, Input, Node, RigidBody2D};
+use gdnative::prelude::{methods, NativeClass, Ref, Vector2};
 use std::f64::consts::PI;
 
 #[derive(NativeClass)]
@@ -7,14 +7,18 @@ use std::f64::consts::PI;
 pub struct Player {
     jump_speed: f32,
     max_facing_angle: f64, // Maximal facing angle in degrees.
+    jump_animation_node: Option<Ref<Node>>,
+    puff_animation_node: Option<Ref<Node>>,
 }
 
 #[methods]
 impl Player {
-    pub fn new(mut _owner: &RigidBody2D) -> Self {
+    pub fn new(_owner: &RigidBody2D) -> Self {
         Player {
             jump_speed: 500.0,
             max_facing_angle: -30.0,
+            jump_animation_node: None,
+            puff_animation_node: None,
         }
     }
 
@@ -24,6 +28,10 @@ impl Player {
         // Set player in the center of the screen
         let size = owner.get_viewport_rect().size;
         owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
+
+        // Find child Nodes
+        self.jump_animation_node = owner.get_node("./AnimatedSprite");
+        self.puff_animation_node = owner.get_node("./PuffAnimation");
     }
 
     fn flap(&mut self, owner: &RigidBody2D) {
@@ -33,18 +41,16 @@ impl Player {
         owner.set_angular_velocity(-PI);
 
         // Start flying animation.
-        owner
-            .get_node("./AnimatedSprite")
+        self.jump_animation_node
             .and_then(|node| unsafe { node.assume_safe().cast::<AnimatedSprite>() })
             .map(|anim| anim.play("jump", true));
 
         // Play and show jump smoke.
-        owner
-            .get_node("./PuffAnimation")
+        self.puff_animation_node
             .and_then(|node| unsafe { node.assume_safe().cast::<AnimatedSprite>() })
             .map(|anim| {
+                anim.show();
                 anim.play("default", true);
-                anim.show()
             });
     }
 
@@ -70,12 +76,11 @@ impl Player {
         }
     }
 
-    // Function connected with animation_finished() event in PuffAnimation child.
+    // Function connected with animation_finished() event from PuffAnimation node.
     #[export]
-    fn _on_puff_animation_finished(&self, owner: &RigidBody2D) {
+    fn _on_puff_animation_finished(&self, _owner: &RigidBody2D) {
         // Hide jump smoke
-        owner
-            .get_node("./PuffAnimation")
+        self.puff_animation_node
             .and_then(|node| unsafe { node.assume_safe().cast::<AnimatedSprite>() })
             .map(|anim| anim.hide());
     }
