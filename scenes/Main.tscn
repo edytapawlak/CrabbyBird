@@ -1,14 +1,20 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://rust_library.tres" type="GDNativeLibrary" id=1]
+[ext_resource path="res://scenes/Main.gdns" type="Script" id=1]
 [ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=2]
-
-[sub_resource type="NativeScript" id=1]
-resource_name = "GameScene"
-class_name = "GameScene"
-library = ExtResource( 1 )
+[ext_resource path="res://assets/background-day.png" type="Texture" id=3]
 
 [node name="Main" type="Node2D"]
-script = SubResource( 1 )
+script = ExtResource( 1 )
+
+[node name="background-day" type="Sprite" parent="."]
+scale = Vector2( 1.66319, 1.40234 )
+texture = ExtResource( 3 )
+centered = false
 
 [node name="Player" parent="." instance=ExtResource( 2 )]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2( -122.5, 0 )
+anchor_mode = 0
+current = true
