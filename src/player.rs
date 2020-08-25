@@ -5,6 +5,7 @@ use std::f64::consts::PI;
 #[derive(NativeClass)]
 #[inherit(RigidBody2D)]
 pub struct Player {
+    x_speed: f32,
     jump_speed: f32,
     max_facing_angle: f64, // Maximal facing angle in degrees.
     jump_animation_node: Option<Ref<Node>>,
@@ -15,6 +16,7 @@ pub struct Player {
 impl Player {
     pub fn new(_owner: &RigidBody2D) -> Self {
         Player {
+            x_speed: 100.0,
             jump_speed: 500.0,
             max_facing_angle: -30.0,
             jump_animation_node: None,
@@ -64,7 +66,6 @@ impl Player {
         }
 
         // Asure that player can't face up more than max facing_angle
-
         let actual_rotation = owner.rotation_degrees();
         if actual_rotation < self.max_facing_angle {
             owner.set_rotation_degrees(self.max_facing_angle);

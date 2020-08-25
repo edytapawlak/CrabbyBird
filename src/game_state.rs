@@ -1,16 +1,16 @@
-use gdnative::{godot_error, godot_wrap_method_inner, godot_wrap_method_parameter_count, methods};
-use gdnative::{Camera2D, NativeClass, Node2D, NodePath, RigidBody2D, Vector2};
+use gdnative::api::{Node, Node2D};
+use gdnative::prelude::{methods, NativeClass, Ref, Vector2};
 
 #[derive(NativeClass)]
 #[inherit(Node2D)]
 pub struct GameState {
-    crabby: Option<RigidBody2D>,
-    camera: Option<Camera2D>,
+    crabby: Option<Ref<Node>>,
+    camera: Option<Ref<Node>>,
 }
 
 #[methods]
 impl GameState {
-    pub fn _init(_owner: Node2D) -> Self {
+    pub fn new(_owner: &Node2D) -> Self {
         GameState {
             crabby: None,
             camera: None,
@@ -18,30 +18,30 @@ impl GameState {
     }
 
     #[export]
-    unsafe fn _ready(&mut self, owner: Node2D) {
-        self.crabby = owner
-            .get_node(NodePath::from_str("./Player"))
-            .and_then(|n| n.cast::<RigidBody2D>());
-        self.camera = owner
-            .get_node(NodePath::from_str("./Camera2D"))
-            .and_then(|n| n.cast::<Camera2D>());
+    fn _ready(&mut self, owner: &Node2D) {
+        self.crabby = owner.get_node("./Player");
+        self.camera = owner.get_node("./Camera2D");
     }
 
     #[export]
-    unsafe fn _physics_process(&self, _owner: Node2D, _delta: f64) {
+    fn _physics_process(&self, _owner: &Node2D, _delta: f64) {
+        // Get crabby x position to make camera follow him.
         let camera_x = self
             .crabby
+            .and_then(|node| unsafe { node.assume_safe().cast::<Node2D>() })
             .expect("There is no crab!")
-            .get_global_position()
+            .global_position()
             .x;
-        let camera_y = self
+
+        // Get TRef to camera Node.
+        let camera = self
             .camera
-            .expect("There is no camera!")
-            .get_global_position()
-            .y;
-        match self.camera {
-            Some(mut x) => x.set_global_position(Vector2::new(camera_x, camera_y)),
-            None => (),
-        }
+            .and_then(|x| unsafe { x.assume_safe().cast::<Node2D>() })
+            .expect("There is no camera!");
+        // Get camera y position.
+        let camera_y = camera.global_position().y;
+
+        // Set camera global position.
+        camera.set_global_position(Vector2::new(camera_x, camera_y));
     }
 }
