@@ -36,7 +36,7 @@ impl Player {
         self.puff_animation_node = owner.get_node("./PuffAnimation");
     }
 
-    fn flap(&mut self, owner: &RigidBody2D) {
+    fn flap(&self, owner: &RigidBody2D) {
         // Change player velocity y component to make him jump.
         owner.set_linear_velocity(Vector2::new(owner.linear_velocity().x, -self.jump_speed));
         // Rotate player anti-clockwise when jumping.
@@ -58,7 +58,7 @@ impl Player {
     }
 
     #[export]
-    fn _physics_process(&mut self, owner: &RigidBody2D, _delta: f64) {
+    fn _physics_process(&self, owner: &RigidBody2D, _delta: f64) {
         // Input
         // Flap if space is pressed
         let input = Input::godot_singleton();
@@ -66,7 +66,7 @@ impl Player {
             self.flap(owner);
         }
 
-        // Asure that player can't face up more than max facing_angle
+        // Assure that player can't face up more than max facing_angle
         let actual_rotation = owner.rotation_degrees();
         if actual_rotation < self.max_facing_angle {
             owner.set_rotation_degrees(self.max_facing_angle);
