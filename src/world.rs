@@ -1,4 +1,4 @@
-use gdnative::api::{Node, Node2D};
+use gdnative::api::{Camera2D, Node, Node2D};
 use gdnative::prelude::{methods, NativeClass, Ref, Vector2};
 
 #[derive(NativeClass)]
@@ -19,8 +19,18 @@ impl World {
 
     #[export]
     fn _ready(&mut self, owner: &Node2D) {
+        // Set references to child nodes.
         self.crabby = owner.get_node("./Player");
         self.camera = owner.get_node("./Camera2D");
+
+        // Get window width.
+        let screen_width = owner.get_viewport_rect().size.width;
+
+        // Set camera offset.
+        let camera_offset = Vector2::new(-0.25 * screen_width, 0.0);
+        self.camera
+            .and_then(|cam| unsafe { cam.assume_safe().cast::<Camera2D>() })
+            .map(|cam| cam.set_offset(camera_offset));
     }
 
     #[export]

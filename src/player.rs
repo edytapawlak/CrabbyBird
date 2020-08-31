@@ -25,13 +25,12 @@ impl Player {
     }
 
     #[export]
-
     fn _ready(&mut self, owner: &RigidBody2D) {
         // Set player in the center of the screen
         let size = owner.get_viewport_rect().size;
         owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
 
-        // Find child Nodes
+        // Find children Nodes
         self.jump_animation_node = owner.get_node("./AnimatedSprite");
         self.puff_animation_node = owner.get_node("./PuffAnimation");
     }
