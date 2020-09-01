@@ -6,7 +6,7 @@ Project is under active development, more features soon.
 
 ## Demo
 
-![CrabbyBird demo](http://postacnormalna.pl/wp-content/uploads/2020/07/crabby.gif)
+![CrabbyBird demo](https://postacnormalna.pl/wp-content/uploads/2020/09/camera_movement.gif)
 
 ## How to run
 
