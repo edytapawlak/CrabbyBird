@@ -1,4 +1,4 @@
-use gdnative::api::{Camera2D, Node, Node2D};
+use gdnative::api::*;
 use gdnative::prelude::{methods, NativeClass, TRef, Vector2};
 
 #[derive(NativeClass)]
@@ -7,7 +7,7 @@ pub struct World;
 
 #[methods]
 impl World {
-    pub fn new(_owner: &Node2D) -> Self {
+    pub fn new(owner: &Node2D) -> Self {
         World
     }
 

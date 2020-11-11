@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://assets/base.png" type="Texture" id=1]
+[ext_resource path="res://scenes/Base.gdns" type="Script" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 169.001, 53.7139 )
+
+[node name="StaticBody2D" type="StaticBody2D"]
+position = Vector2( 0, -112 )
+script = ExtResource( 2 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+centered = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 168.389, 55.7072 )
+shape = SubResource( 1 )
+
+[node name="Notifier" type="VisibilityNotifier2D" parent="."]
+position = Vector2( 350, 0 )
+[connection signal="screen_exited" from="Notifier" to="." method="_on_notifier_screen_exited"]
