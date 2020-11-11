@@ -7,7 +7,8 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gdnative = "0.9.0-preview.0"
+gdnative = "0.9.1"
+euclid = "0.22.1"
 
 [lib]
 crate-type = ["cdylib"]
