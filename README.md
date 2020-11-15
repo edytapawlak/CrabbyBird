@@ -6,7 +6,7 @@ Project is under active development, more features soon.
 
 ## Demo
 
-![CrabbyBird demo](https://postacnormalna.pl/wp-content/uploads/2020/09/camera_movement.gif)
+![CrabbyBird demo](https://postacnormalna.pl/wp-content/uploads/2020/11/out.gif)
 
 ## How to run
 
@@ -19,3 +19,5 @@ If you want to use this repo as tutorial, here's a list of development stages:
 
 1. [Basic player movement](https://github.com/edytapawlak/CrabbyBird/tree/2f6a3ed7b54caf725173559f77edf161ce7b1b55)
 2. [Jump animation](https://github.com/edytapawlak/CrabbyBird/tree/3e967cbb124483000b7c36eaa77e52e74554b753)
+3. [Camera movement](https://github.com/edytapawlak/CrabbyBird/tree/761e2fded78061d676bcfdeedd3349b143420f48)
+4. [World generation part 1 – ground](https://github.com/edytapawlak/CrabbyBird/tree/da4bcbad3ebd650e2757d19c2017f217395cfb9a)
