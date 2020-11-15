@@ -16,7 +16,6 @@ impl Base {
 
     #[export]
     pub fn _on_notifier_screen_exited(&self, owner: &StaticBody2D) {
-        godot_print!("exited!");
         owner.queue_free();
     }
 }

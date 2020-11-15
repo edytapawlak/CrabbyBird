@@ -1,5 +1,5 @@
+use gdnative::api::*;
 use gdnative::prelude::{godot_print, methods, NativeClass, Ref};
-use gdnative::{api::*, TRef};
 
 #[derive(NativeClass)]
 #[inherit(Node2D)]
@@ -22,17 +22,21 @@ impl BaseManager {
     }
 
     #[export]
-    fn _ready(&mut self, owner: &Node2D) {
-        self.base_template = load_scene("res://scenes/Base.tscn", |scene| Some(scene.claim()));
+    fn _ready(&mut self, _owner: &Node2D) {
+        self.base_template = ResourceLoader::godot_singleton()
+            .load("res://scenes/Base.tscn", "", false)
+            .and_then(|scene| {
+                unsafe { scene.assume_safe().cast::<PackedScene>() }.map(|x| x.claim())
+            });
+
         match &self.base_template {
-            Some(_scene) => godot_print!("Loaded child scene successfully!"),
             None => godot_print!("Could not load child scene. Check name."),
+            _ => {}
         }
-        self.control_spawning(owner, 600.)
     }
 
     #[export]
-    fn control_spawning(&mut self, owner: &Node2D, x_end: f32) {
+    pub fn control_spawning(&mut self, owner: &Node2D, x_end: f32) {
         while x_end > self.end_position {
             self.spawn_one(owner, self.end_position, -self.sprite_height);
             self.end_position += self.sprite_width;
@@ -41,30 +45,24 @@ impl BaseManager {
 
     #[export]
     fn spawn_one(&mut self, owner: &Node2D, x: f32, y: f32) {
-        if let Some(base_obj) = self.base_template.take() {
-            let base_obj = unsafe { base_obj.assume_safe() };
-            let base = base_obj
-                .instance(0)
-                .and_then(|node| {
-                    let node = unsafe { node.assume_safe() };
-                    node.cast::<Node2D>()
-                })
-                .expect("Could not create base instance.");
-            base.set_position(euclid::Vector2D::new(x, y));
+        match self.base_template {
+            Some(ref base_obj) => {
+                let base = unsafe {
+                    // unsafe because `assume_safe` function using.
+                    base_obj
+                        .assume_safe()
+                        // Get instance of `PackedScene`.
+                        .instance(0)
+                        // Can be casted to `StaticBody2D` but `Node2D` is enough.
+                        .and_then(|node| node.assume_safe().cast::<Node2D>())
+                        .expect("Could not create base instance.")
+                };
+                base.set_position(euclid::Vector2D::new(x, y));
 
-            owner.add_child(base, false);
-            self.base_template.replace(base_obj.claim());
+                // Add base to manager.
+                owner.add_child(base, false);
+            }
+            None => print!("Base template error."),
         }
     }
-}
-
-pub fn load_scene<F, T>(name: &str, mut f: F) -> Option<T>
-where
-    F: FnMut(TRef<PackedScene>) -> Option<T>,
-{
-    let scene = ResourceLoader::godot_singleton().load(name, "PackedScene", false)?;
-    let scene = unsafe { scene.assume_safe() };
-    let packed_scene = scene.cast::<PackedScene>()?;
-
-    f(packed_scene)
 }
