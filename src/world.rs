@@ -118,7 +118,14 @@ impl World {
         if camera_x_end - self.last_pipe_x > self.pipe_density {
             godot_print!("Send `pipe_needed signal.`");
             self.last_pipe_x = camera_x_end;
-            owner.emit_signal("pipe_needed", &[Variant::from_i64(camera_x_end as i64)]);
+            owner.emit_signal(
+                "pipe_needed",
+                &[
+                    Variant::from_i64(camera_x_end as i64),
+                    Variant::from_i64(112.0 as i64), // temporary value. It's height of base image.
+                    Variant::from_i64(self.screen_size.1 as i64),
+                ],
+            );
         }
     }
 }

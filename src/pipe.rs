@@ -1,9 +1,5 @@
-use gdnative::{
-    api::{StaticBody2D},
-};
-use gdnative::{
-    prelude::{methods, NativeClass},
-};
+use gdnative::api::StaticBody2D;
+use gdnative::prelude::{methods, NativeClass};
 
 #[derive(NativeClass)]
 #[inherit(StaticBody2D)]
