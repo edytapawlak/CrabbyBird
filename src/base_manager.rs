@@ -1,5 +1,10 @@
-use gdnative::api::*;
 use gdnative::prelude::{godot_print, methods, NativeClass, Ref};
+use gdnative::{
+    api::*,
+    core_types::{Variant, VariantType},
+    prelude::PropertyUsage,
+    prelude::{ClassBuilder, ExportInfo, Signal, SignalArgument},
+};
 
 #[derive(NativeClass)]
 #[inherit(Node2D)]

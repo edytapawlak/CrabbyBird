@@ -1,17 +1,27 @@
-use gdnative::prelude::{methods, NativeClass, TRef, Vector2};
 use gdnative::{
     api::*,
     godot_print,
     prelude::{Instance, Unique},
+};
+use gdnative::{
+    core_types::{Variant, VariantType},
+    prelude::{
+        methods, ClassBuilder, ExportInfo, NativeClass, PropertyUsage, Signal, SignalArgument,
+        TRef, Vector2,
+    },
 };
 
 use crate::base_manager::BaseManager;
 
 #[derive(NativeClass)]
 #[inherit(Node2D)]
+#[register_with(Self::register_signals)]
 pub struct World {
     base_manager: Instance<BaseManager, Unique>,
     screen_size: (f32, f32),
+    // Pipe spawning settings.
+    pipe_density: f32,
+    last_pipe_x: f32,
 }
 
 #[methods]
@@ -20,7 +30,21 @@ impl World {
         World {
             base_manager: Instance::new(),
             screen_size: (0.0, 0.0),
+            pipe_density: 250.,
+            last_pipe_x: 500.0,
         }
+    }
+
+    fn register_signals(builder: &ClassBuilder<Self>) {
+        builder.add_signal(Signal {
+            name: "pipe_needed",
+            args: &[SignalArgument {
+                name: "position_x",
+                default: Variant::from_i64(100),
+                export_info: ExportInfo::new(VariantType::I64),
+                usage: PropertyUsage::DEFAULT,
+            }],
+        });
     }
 
     fn get_crabby(&self, owner: &Node) -> TRef<'_, Node2D> {
@@ -64,7 +88,7 @@ impl World {
     }
 
     #[export]
-    fn _physics_process(&self, owner: &Node2D, _delta: f64) {
+    fn _physics_process(&mut self, owner: &Node2D, _delta: f64) {
         // Get TRef to camera Node.
         let camera = self.get_camera(owner);
 
@@ -89,5 +113,12 @@ impl World {
         self.base_manager
             .map_mut(|manager, owner| manager.control_spawning(owner.as_ref(), camera_x_end))
             .expect("Can't call menager's function: `manage_base`");
+
+        // Emit signal to pipe_manager if pipe is needed.
+        if camera_x_end - self.last_pipe_x > self.pipe_density {
+            godot_print!("Send `pipe_needed signal.`");
+            self.last_pipe_x = camera_x_end;
+            owner.emit_signal("pipe_needed", &[Variant::from_i64(camera_x_end as i64)]);
+        }
     }
 }

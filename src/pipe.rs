@@ -1,6 +1,7 @@
-use gdnative::api::StaticBody2D;
 use gdnative::{
-    godot_print,
+    api::{StaticBody2D},
+};
+use gdnative::{
     prelude::{methods, NativeClass},
 };
 
@@ -15,7 +16,8 @@ impl Pipe {
     }
 
     #[export]
-    pub fn _on_notifier_screen_exited(&self, owner: &StaticBody2D) {
+    pub fn _on_pipe_screen_exited(&self, owner: &StaticBody2D) {
+        println!("Remove pipe!");
         owner.queue_free();
     }
 }

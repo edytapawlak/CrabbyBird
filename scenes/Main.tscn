@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scenes/Main.gdns" type="Script" id=1]
 [ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/background-day.png" type="Texture" id=3]
 [ext_resource path="res://scenes/BaseManager.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/PipeManager.tscn" type="PackedScene" id=5]
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -20,6 +21,8 @@ centered = false
 offset = Vector2( -122.5, 0 )
 anchor_mode = 0
 current = true
+
+[node name="PipeManager" parent="." instance=ExtResource( 5 )]
 
 [node name="BaseManager" parent="." instance=ExtResource( 4 )]
 position = Vector2( 0, 720 )
