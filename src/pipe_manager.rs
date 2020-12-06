@@ -18,7 +18,7 @@ impl PipeManager {
             pipe_template: None,
             maximal_sprite_height: 640.0,
             minimal_sprite_height: 50.0,
-            pipe_offset: 90.0,
+            pipe_offset: 70.0,
         }
     }
 

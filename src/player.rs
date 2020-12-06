@@ -15,7 +15,7 @@ impl Player {
     pub fn new(_owner: &RigidBody2D) -> Self {
         Player {
             x_speed: 100.0,
-            jump_speed: 500.0,
+            jump_speed: 300.0,
             max_facing_angle: -30.0,
         }
     }

@@ -9,11 +9,7 @@
 [ext_resource path="res://assets/puff/puff4.png" type="Texture" id=7]
 [ext_resource path="res://assets/puff/puff2.png" type="Texture" id=8]
 
-[sub_resource type="CapsuleShape2D" id=1]
-radius = 21.432
-height = 55.136
-
-[sub_resource type="SpriteFrames" id=2]
+[sub_resource type="SpriteFrames" id=1]
 animations = [ {
 "frames": [ ExtResource( 5 ), ExtResource( 8 ), ExtResource( 6 ), ExtResource( 7 ) ],
 "loop": false,
@@ -21,7 +17,7 @@ animations = [ {
 "speed": 25.0
 } ]
 
-[sub_resource type="SpriteFrames" id=3]
+[sub_resource type="SpriteFrames" id=2]
 animations = [ {
 "frames": [ ExtResource( 4 ), ExtResource( 1 ), ExtResource( 3 ) ],
 "loop": false,
@@ -29,23 +25,29 @@ animations = [ {
 "speed": 5.0
 } ]
 
+[sub_resource type="CapsuleShape2D" id=3]
+radius = 11.7519
+height = 17.801
+
 [node name="Player" type="RigidBody2D"]
 gravity_scale = 10.0
 script = ExtResource( 2 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-rotation = 1.5708
-shape = SubResource( 1 )
-
 [node name="PuffAnimation" type="AnimatedSprite" parent="."]
 visible = false
 modulate = Color( 0.921569, 0.917647, 0.54902, 0.517647 )
-position = Vector2( -1, 48.5 )
-scale = Vector2( 1, 1.5 )
-frames = SubResource( 2 )
+position = Vector2( -1.66849, 20.6467 )
+scale = Vector2( 0.5, 0.7 )
+frames = SubResource( 1 )
 frame = 1
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
-frames = SubResource( 3 )
+scale = Vector2( 0.5, 0.5 )
+frames = SubResource( 2 )
 animation = "jump"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0.491394, -1.63798 )
+rotation = 1.5708
+shape = SubResource( 3 )
 [connection signal="animation_finished" from="PuffAnimation" to="." method="_on_puff_animation_finished"]

@@ -4,31 +4,35 @@
 [ext_resource path="res://scenes/Pipe.gdns" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 22.5051, 318.379 )
+extents = Vector2( 33.808, 464.619 )
 
 [sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 23.4232, 313.202 )
+extents = Vector2( 34.4135, 466.07 )
 
 [node name="Pipe" type="StaticBody2D"]
 script = ExtResource( 2 )
 
 [node name="PipeUp" type="Sprite" parent="."]
-position = Vector2( 0, 90 )
+position = Vector2( 0, 70 )
+scale = Vector2( 1.5, 1.5 )
 texture = ExtResource( 1 )
 centered = false
 
 [node name="PipeDown" type="Sprite" parent="."]
-position = Vector2( 52, -90 )
+position = Vector2( 0, -70 )
 rotation = -3.14159
+scale = Vector2( -1.5, 1.5 )
 texture = ExtResource( 1 )
 centered = false
 
 [node name="col_pipe_up" type="CollisionShape2D" parent="."]
-position = Vector2( 25.7337, -409.032 )
+visible = false
+position = Vector2( 39.7681, -536.658 )
 shape = SubResource( 1 )
 
 [node name="col_pipe_down" type="CollisionShape2D" parent="."]
-position = Vector2( 25.7337, 404.261 )
+visible = false
+position = Vector2( 38.7335, 537.655 )
 shape = SubResource( 2 )
 
 [node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="."]
