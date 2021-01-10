@@ -22,3 +22,4 @@ If you want to use this repo as tutorial, here's a list of development stages:
 3. [Camera movement](https://github.com/edytapawlak/CrabbyBird/tree/761e2fded78061d676bcfdeedd3349b143420f48)
 4. [World generation part 1 – ground](https://github.com/edytapawlak/CrabbyBird/tree/64b320e22f7af8faa3f11fc510d931b51f5a2bb4)
 5. [World generation part 2 – pipes](https://github.com/edytapawlak/CrabbyBird/tree/43bc17a2daa5a34e46cb3f883d5a109fc3a03c3b)
+6. [Game stages](https://github.com/edytapawlak/CrabbyBird/tree/81f51a367ef31ee608f8d4fb8b962a05614e3521)
