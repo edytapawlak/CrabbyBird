@@ -59,10 +59,6 @@ impl PipeManager {
         screen_bottom_margin: Variant,
         screen_height: Variant,
     ) {
-        godot_print!(
-            "Got pipe_needed signal from World on position: {:?}",
-            position_x
-        );
         // Parse arguments.
         let screen_height = screen_height.to_f64() as f32;
         let screen_margin = screen_bottom_margin.to_f64() as f32;

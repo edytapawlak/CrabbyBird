@@ -1,8 +1,5 @@
 use gdnative::api::StaticBody2D;
-use gdnative::{
-    godot_print,
-    prelude::{methods, NativeClass},
-};
+use gdnative::prelude::{methods, NativeClass};
 
 #[derive(NativeClass)]
 #[inherit(StaticBody2D)]

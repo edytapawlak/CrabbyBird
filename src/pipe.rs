@@ -13,7 +13,7 @@ impl Pipe {
 
     #[export]
     pub fn _on_pipe_screen_exited(&self, owner: &StaticBody2D) {
-        println!("Remove pipe!");
+        // Remove pipe.
         owner.queue_free();
     }
 }

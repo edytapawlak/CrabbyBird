@@ -116,7 +116,6 @@ impl World {
 
         // Emit signal to pipe_manager if pipe is needed.
         if camera_x_end - self.last_pipe_x > self.pipe_density {
-            godot_print!("Send `pipe_needed signal.`");
             self.last_pipe_x = camera_x_end;
             owner.emit_signal(
                 "pipe_needed",
