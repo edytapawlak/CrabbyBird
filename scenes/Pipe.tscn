@@ -10,6 +10,8 @@ extents = Vector2( 33.808, 464.619 )
 extents = Vector2( 34.4135, 466.07 )
 
 [node name="Pipe" type="StaticBody2D"]
+collision_layer = 2
+collision_mask = 0
 script = ExtResource( 2 )
 
 [node name="PipeUp" type="Sprite" parent="."]

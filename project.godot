@@ -34,6 +34,12 @@ ui_flap={
  ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="player"
+2d_physics/layer_2="pipe"
+2d_physics/layer_3="base"
+
 [rendering]
 
 quality/driver/driver_name="GLES2"

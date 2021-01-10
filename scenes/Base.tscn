@@ -8,6 +8,7 @@ extents = Vector2( 169.001, 53.7139 )
 
 [node name="StaticBody2D" type="StaticBody2D"]
 position = Vector2( 0, -112 )
+collision_layer = 4
 script = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]

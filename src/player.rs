@@ -1,4 +1,4 @@
-use gdnative::prelude::{methods, ClassBuilder, NativeClass, Signal, TRef, Vector2};
+use gdnative::{prelude::{methods, ClassBuilder, NativeClass, Signal, TRef, Vector2}};
 use gdnative::{
     api::{AnimatedSprite, Input, Node, RigidBody2D},
     Ref,
@@ -58,6 +58,9 @@ impl Player {
 
     #[export]
     fn _ready(&mut self, owner: &RigidBody2D) {
+        owner.set_collision_layer(1); // 2^0
+        owner.set_collision_mask(6); // We want to set collision with 1 and 2 mask layer. 2^1 + 2^2 = 6
+
         // Set player in the center of the screen
         let size = owner.get_viewport_rect().size;
         owner.set_position(Vector2::new(size.width / 2., size.height / 2.));
@@ -133,6 +136,7 @@ impl Player {
     }
 
     fn dead(&self, owner: &RigidBody2D) {
+        owner.set_collision_mask(4); // 2^2
         owner.set_linear_velocity(Vector2::new(0.0, owner.linear_velocity().y));
         self.get_jump_animation(owner).play("gameover", false);
     }

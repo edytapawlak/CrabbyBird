@@ -88,7 +88,7 @@ impl PipeManager {
                         .instance(0)
                         // Can be casted to `StaticBody2D` but `Node2D` is enough.
                         .and_then(|node| node.assume_safe().cast::<Node2D>())
-                        .expect("Could not create base instance.")
+                        .expect("Could not create pipe instance.")
                 };
                 pipe.set_position(euclid::Vector2D::new(x, y));
 
