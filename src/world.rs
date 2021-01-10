@@ -1,5 +1,6 @@
 use gdnative::{
     api::*,
+    core_types::VariantArray,
     godot_print,
     prelude::{Instance, Unique},
 };
@@ -17,6 +18,7 @@ use crate::base_manager::BaseManager;
 #[inherit(Node2D)]
 #[register_with(Self::register_signals)]
 pub struct World {
+    obstacle_status: bool,
     base_manager: Instance<BaseManager, Unique>,
     screen_size: (f32, f32),
     // Pipe spawning settings.
@@ -28,6 +30,7 @@ pub struct World {
 impl World {
     pub fn new(_owner: &Node2D) -> Self {
         World {
+            obstacle_status: false,
             base_manager: Instance::new(),
             screen_size: (0.0, 0.0),
             pipe_density: 250.,
@@ -47,14 +50,14 @@ impl World {
         });
     }
 
-    fn get_crabby(&self, owner: &Node) -> TRef<'_, Node2D> {
+    fn get_crabby(&self, owner: TRef<Node2D>) -> TRef<'_, Node2D> {
         owner
             .get_node("./Player")
             .and_then(|cam| unsafe { cam.assume_safe().cast::<Node2D>() })
             .expect("There is no crabby")
     }
 
-    fn get_camera(&self, owner: &Node) -> TRef<'_, Camera2D> {
+    fn get_camera(&self, owner: TRef<Node2D>) -> TRef<'_, Camera2D> {
         owner
             .get_node("./Camera2D")
             .and_then(|cam| unsafe { cam.assume_safe().cast::<Camera2D>() })
@@ -62,7 +65,7 @@ impl World {
     }
 
     #[export]
-    fn _ready(&mut self, owner: &Node2D) {
+    fn _ready(&mut self, owner: TRef<Node2D>) {
         let size = owner.get_viewport_rect().size;
         self.screen_size = (size.width, size.height);
 
@@ -85,10 +88,44 @@ impl World {
                 godot_print!("Problem with loading BaseManager node.");
             }
         }
+
+        // Connect game over signal.
+        self.get_crabby(owner)
+            .connect(
+                "game_over",
+                owner,
+                "handle_game_over",
+                VariantArray::new_shared(),
+                0,
+            )
+            .expect("Problem with connecting `game_over` signal");
+
+        // Connect signal to start generating pipes.
+        self.get_crabby(owner)
+            .connect(
+                "control_started",
+                owner,
+                "handle_control_start",
+                VariantArray::new_shared(),
+                1,
+            )
+            .expect("Problem with connecting `control_started` signal");
     }
 
     #[export]
-    fn _physics_process(&mut self, owner: &Node2D, _delta: f64) {
+    fn handle_game_over(&self, _owner: &Node2D) {
+        godot_print!("Game Over!")
+        // TODO game over.
+    }
+
+    #[export]
+    fn handle_control_start(&mut self, _owner: &Node2D) {
+        // Start obstales generation.
+        self.obstacle_status = true;
+    }
+
+    #[export]
+    fn _physics_process(&mut self, owner: TRef<Node2D>, _delta: f64) {
         // Get TRef to camera Node.
         let camera = self.get_camera(owner);
 
@@ -115,7 +152,7 @@ impl World {
             .expect("Can't call menager's function: `manage_base`");
 
         // Emit signal to pipe_manager if pipe is needed.
-        if camera_x_end - self.last_pipe_x > self.pipe_density {
+        if camera_x_end - self.last_pipe_x > self.pipe_density && self.obstacle_status {
             self.last_pipe_x = camera_x_end;
             owner.emit_signal(
                 "pipe_needed",

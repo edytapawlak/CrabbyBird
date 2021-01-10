@@ -1,4 +1,4 @@
-use gdnative::prelude::{methods, NativeClass, TRef, Vector2};
+use gdnative::prelude::{methods, ClassBuilder, NativeClass, Signal, TRef, Vector2};
 use gdnative::{
     api::{AnimatedSprite, Input, Node, RigidBody2D},
     Ref,
@@ -7,6 +7,7 @@ use std::f64::consts::PI;
 
 #[derive(NativeClass)]
 #[inherit(RigidBody2D)]
+#[register_with(Self::register_signals)]
 pub struct Player {
     x_speed: f32,
     jump_speed: f32,
@@ -28,6 +29,17 @@ impl Player {
             max_facing_angle: -30.0,
             state: PlayerState::Flying,
         }
+    }
+
+    fn register_signals(builder: &ClassBuilder<Self>) {
+        builder.add_signal(Signal {
+            name: "game_over",
+            args: &[],
+        });
+        builder.add_signal(Signal {
+            name: "control_started",
+            args: &[],
+        });
     }
 
     fn get_jump_animation(&self, owner: &RigidBody2D) -> TRef<'_, AnimatedSprite> {
@@ -73,6 +85,7 @@ impl Player {
         if Input::is_action_pressed(&input, "ui_flap") {
             match self.state {
                 PlayerState::Flying => {
+                    owner.emit_signal("control_started", &[]);
                     self.state = PlayerState::Flapping;
                     self.flap(owner);
                 }
@@ -133,7 +146,9 @@ impl Player {
 
     // Function connected with body_entered() event from Player node.
     #[export]
-    fn _on_player_body_entered(&mut self, _owner: &RigidBody2D, _node: Ref<Node>) {
-        self.state = PlayerState::Dead
+    fn _on_player_body_entered(&mut self, owner: &RigidBody2D, _node: Ref<Node>) {
+        self.state = PlayerState::Dead;
+        // Emit game over signal
+        owner.emit_signal("game_over", &[]);
     }
 }

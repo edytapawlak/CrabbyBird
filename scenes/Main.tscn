@@ -15,14 +15,14 @@ scale = Vector2( 1.66319, 1.40234 )
 texture = ExtResource( 3 )
 centered = false
 
+[node name="PipeManager" parent="." instance=ExtResource( 5 )]
+
+[node name="BaseManager" parent="." instance=ExtResource( 4 )]
+position = Vector2( 0, 720 )
+
 [node name="Player" parent="." instance=ExtResource( 2 )]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2( -122.5, 0 )
 anchor_mode = 0
 current = true
-
-[node name="PipeManager" parent="." instance=ExtResource( 5 )]
-
-[node name="BaseManager" parent="." instance=ExtResource( 4 )]
-position = Vector2( 0, 720 )
