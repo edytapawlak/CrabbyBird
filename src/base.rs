@@ -1,4 +1,4 @@
-use gdnative::{api::StaticBody2D};
+use gdnative::api::StaticBody2D;
 use gdnative::prelude::{methods, NativeClass};
 
 #[derive(NativeClass)]

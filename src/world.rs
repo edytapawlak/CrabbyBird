@@ -64,6 +64,13 @@ impl World {
             .expect("There is no camera")
     }
 
+    fn get_game_state(&self, owner: TRef<Node2D>) -> TRef<'_, CanvasLayer> {
+        owner
+            .get_node("./GameState")
+            .and_then(|gs| unsafe { gs.assume_safe().cast::<CanvasLayer>() })
+            .expect("There is no game state")
+    }
+
     #[export]
     fn _ready(&mut self, owner: TRef<Node2D>) {
         let size = owner.get_viewport_rect().size;
@@ -106,6 +113,17 @@ impl World {
                 "control_started",
                 owner,
                 "handle_control_start",
+                VariantArray::new_shared(),
+                1,
+            )
+            .expect("Problem with connecting `control_started` signal");
+
+        // Connect signal to update score.
+        self.get_crabby(owner)
+            .connect(
+                "pass_pipe",
+                self.get_game_state(owner),
+                "handle_pass_pipe",
                 VariantArray::new_shared(),
                 1,
             )

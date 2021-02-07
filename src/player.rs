@@ -1,4 +1,4 @@
-use gdnative::{prelude::{methods, ClassBuilder, NativeClass, Signal, TRef, Vector2}};
+use gdnative::prelude::{methods, ClassBuilder, NativeClass, Signal, TRef, Vector2};
 use gdnative::{
     api::{AnimatedSprite, Input, Node, RigidBody2D},
     Ref,
@@ -38,6 +38,10 @@ impl Player {
         });
         builder.add_signal(Signal {
             name: "control_started",
+            args: &[],
+        });
+        builder.add_signal(Signal {
+            name: "pass_pipe",
             args: &[],
         });
     }
