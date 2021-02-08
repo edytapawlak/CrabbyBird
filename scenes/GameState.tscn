@@ -5,16 +5,26 @@
 
 [sub_resource type="DynamicFont" id=1]
 size = 64
+outline_color = Color( 0.00784314, 0.00784314, 0.00784314, 0.705882 )
 font_data = ExtResource( 1 )
 
 [node name="GameState" type="CanvasLayer"]
 script = ExtResource( 2 )
 
 [node name="ScoreLabel" type="Label" parent="."]
-margin_right = 40.0
-margin_bottom = 14.0
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -18.5
+margin_right = 18.5
+margin_bottom = 65.0
+grow_horizontal = 2
 custom_fonts/font = SubResource( 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 3
+custom_constants/shadow_offset_y = 3
 text = "0"
+align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
